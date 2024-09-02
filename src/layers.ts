@@ -2092,7 +2092,7 @@ export const utilityLineLayer = new FeatureLayer({
     },
   },
   layerId: 2,
-  title: 'Line Symbol ', // Relocation PLan?
+  title: 'Line Symbol', // Relocation PLan?
   elevationInfo: {
     mode: 'relative-to-ground', // original was "relative-to-scene"
     featureExpressionInfo: {

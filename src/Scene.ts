@@ -76,7 +76,7 @@ const utilityGroupLayer = new GroupLayer({
 // Change the layer order by using index numbers in map.add
 map.add(viaductLayer);
 map.add(pierAccessLayer);
-// map.add(utilityGroupLayer);
+map.add(utilityGroupLayer);
 map.add(treeGroupLayer);
 map.add(lotGroupLayer);
 map.add(structureLayer);
@@ -128,10 +128,10 @@ export const layerList = new LayerList({
     item.title === 'Handed-Over (public + private)' ||
     item.title === 'Tree Cutting' ||
     item.title === 'Tree Compensation' ||
-    item.title === 'Point (symbol)' ||
-    item.title === 'Point (status)' ||
-    item.title === 'Line (symbol)' ||
-    item.title === 'Line (status)' ||
+    item.title === 'Point Symbol' ||
+    item.title === 'Point Status' ||
+    item.title === 'Line Symbol' ||
+    item.title === 'Line Status' ||
     item.title === 'Pier Head/Column' ||
     item.title === 'Viaduct' ||
     item.title === 'Station Structures'
