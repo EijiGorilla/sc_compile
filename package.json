@@ -1,8 +1,13 @@
 {
+  "homepage": "https://eijigorilla.github.io/sc_compile",
   "name": "sc_compile",
-  "version": "0.1.0",
+  "version": "1.0.1",
   "private": true,
   "dependencies": {
+    "@amcharts/amcharts5": "^5.10.4",
+    "@arcgis/core": "^4.30.9",
+    "@esri/calcite-components-react": "^2.8.5",
+    "@loadable/component": "^5.16.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -17,6 +22,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -25,7 +32,8 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:prettier/recommended"
     ]
   },
   "browserslist": {
@@ -39,5 +47,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/loadable__component": "^5.13.9",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "gh-pages": "^6.1.1",
+    "prettier": "^3.3.3"
   }
 }
