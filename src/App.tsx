@@ -219,7 +219,7 @@ function App() {
             width={'55px'}
             style={{ marginBottom: 'auto', marginTop: 'auto' }}
           />
-          <b className="headerTitle" style={{ width: '250px' }}>
+          <b className="headerTitle" style={{ width: '30%' }}>
             SC OVERALL PROGRESS
           </b>
           <div className="date">{!asOfDate ? '' : 'As of ' + asOfDate}</div>
