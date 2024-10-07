@@ -51,6 +51,15 @@ calcite-panel {
   --calcite-color-border-3: #555555;
 }
 
+calcite-label {
+  --calcite-color-text-1: #9ca3af;
+  --calcite-font-size--1: 1.1rem;
+  /* margin-top: 1vh; */
+  margin-left: 15px;
+  margin-top: 5px;
+  /* border-color: rgb(0, 0, 0, 0); */
+}
+
 calcite-list {
   overflow-y: auto;
   --calcite-color-border-3: #555555;

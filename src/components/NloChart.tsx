@@ -8,13 +8,9 @@ import * as am5percent from '@amcharts/amcharts5/percent';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
 import { generateNloData, generateNloNumber, statusNloChart, thousands_separators } from '../Query';
-
-//https://codesandbox.io/s/amcharts5-react-demo-forked-gid7b0?from-embed=&file=/src/App.js:271-276
-// https://github.com/reactchartjs/react-chartjs-2/blob/master/src/chart.tsx
-//https://www.reddit.com/r/reactjs/comments/gr5vhh/react_hooks_and_amcharts4/?rdt=56344
-//https://medium.com/swlh/how-to-use-amcharts-4-with-react-hooks-999a62c185a5
-//https://codesandbox.io/s/amcharts5-react-demo-forked-hrth2d
-// Zoom
+import '@esri/calcite-components/dist/components/calcite-label';
+import { CalciteLabel } from '@esri/calcite-components-react';
+import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -83,9 +79,7 @@ const NloChart = memo((props: any) => {
     // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/
     var chart = root.container.children.push(
       am5percent.PieChart.new(root, {
-        //centerY: am5.percent(-2), //-10
-        y: am5.percent(-25), // space between pie chart and total lots
-        layout: root.horizontalLayout,
+        layout: root.verticalLayout,
       }),
     );
     chartRef.current = chart;
@@ -100,18 +94,36 @@ const NloChart = memo((props: any) => {
         //legendLabelText: "[{fill}]{category}[/]",
         legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
         radius: am5.percent(45), // outer radius
-        innerRadius: am5.percent(20),
-        marginBottom: -10,
+        innerRadius: am5.percent(28),
+        scale: 1.8,
       }),
     );
     pieSeriesRef.current = pieSeries;
     chart.series.push(pieSeries);
 
+    // values inside a donut
+    let inner_label = pieSeries.children.push(
+      am5.Label.new(root, {
+        text: '[#ffffff]{valueSum}[/]\n[fontSize: 5px; #d3d3d3; verticalAlign: super]NLOs[/]',
+        fontSize: '1rem',
+        centerX: am5.percent(50),
+        centerY: am5.percent(40),
+        populateText: true,
+        oversizedBehavior: 'fit',
+        textAlign: 'center',
+      }),
+    );
+
+    pieSeries.onPrivate('width', (width: any) => {
+      inner_label.set('maxWidth', width * 0.7);
+    });
+
     // Set slice opacity and stroke color
     pieSeries.slices.template.setAll({
+      toggleKey: 'none',
       fillOpacity: 0.9,
       stroke: am5.color('#ffffff'),
-      strokeWidth: 1,
+      strokeWidth: 0.5,
       strokeOpacity: 1,
       templateField: 'sliceSettings',
     });
@@ -180,12 +192,11 @@ const NloChart = memo((props: any) => {
 
     // Legend
     // https://www.amcharts.com/docs/v5/charts/percent-charts/legend-percent-series/
-    var legend = root.container.children.push(
+    var legend = chart.children.push(
       am5.Legend.new(root, {
         centerX: am5.percent(50),
         x: am5.percent(50),
-        y: am5.percent(55),
-        layout: root.verticalLayout,
+        scale: 1,
       }),
     );
     legendRef.current = legend;
@@ -209,7 +220,7 @@ const NloChart = memo((props: any) => {
     // https://www.amcharts.com/docs/v5/tutorials/pie-chart-with-a-legend-with-dynamically-sized-labels/
     // This aligns Legend to Left
     chart.onPrivate('width', function (width: any) {
-      const boxWidth = 190; //props.style.width;
+      const boxWidth = 220; //props.style.width;
       var availableSpace = Math.max(width - chart.height() - boxWidth, boxWidth);
       //var availableSpace = (boxWidth - valueLabelsWidth) * 0.7
       legend.labels.template.setAll({
@@ -261,21 +272,40 @@ const NloChart = memo((props: any) => {
 
   return (
     <>
-      <div className="lotNumberImage">
-        <div style={{}}>
-          <div className="totalStructuresLabel">TOTAL NON-LAND OWNERS </div>
-          <br />
-          <br />
-          <b className="permitToEnterNumber">{thousands_separators(nloNumber)} </b>
-        </div>
-        <img
-          src="https://EijiGorilla.github.io/Symbols/NLO_Logo.svg"
-          alt="NLO Logo"
-          height={'19%'}
-          width={'19%'}
-          style={{ padding: '10px', margin: 'auto' }}
-        />
+      <div
+        style={{
+          color: primaryLabelColor,
+          fontSize: '1.2rem',
+          marginLeft: '13px',
+          marginTop: '10px',
+        }}
+      >
+        TOTAL NON-LAND OWNERS
       </div>
+      <CalciteLabel layout="inline">
+        <b className="totalLotsNumber" style={{ color: valueLabelColor }}>
+          <div
+            style={{
+              color: valueLabelColor,
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              fontFamily: 'calibri',
+              lineHeight: '1.2',
+              marginLeft: '15px',
+            }}
+          >
+            {thousands_separators(nloNumber)}
+          </div>
+          <img
+            src="https://EijiGorilla.github.io/Symbols/NLO_Logo.svg"
+            alt="Land Logo"
+            height={'50px'}
+            width={'50px'}
+            style={{ marginLeft: '260px', display: 'flex', marginTop: '-50px' }}
+          />
+        </b>
+      </CalciteLabel>
+
       <div
         id={chartID}
         style={{

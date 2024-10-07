@@ -16,6 +16,9 @@ import {
   statusStructureChart,
   statusMoaStructureChart,
 } from '../Query';
+import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import '@esri/calcite-components/dist/components/calcite-label';
+import { CalciteLabel } from '@esri/calcite-components-react';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -101,9 +104,7 @@ const StructureChart = memo((props: any) => {
     // https://www.amcharts.com/docs/v5/charts/percent-charts/pie-chart/
     var chart = root.container.children.push(
       am5percent.PieChart.new(root, {
-        //centerY: am5.percent(-2), //-10
-        y: am5.percent(-25), // space between pie chart and total lots
-        layout: root.horizontalLayout,
+        layout: root.verticalLayout,
       }),
     );
     chartRef.current = chart;
@@ -118,18 +119,36 @@ const StructureChart = memo((props: any) => {
         //legendLabelText: "[{fill}]{category}[/]",
         legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
         radius: am5.percent(45), // outer radius
-        innerRadius: am5.percent(20),
-        marginBottom: -10,
+        innerRadius: am5.percent(28),
+        scale: 2,
       }),
     );
     pieSeriesRef.current = pieSeries;
     chart.series.push(pieSeries);
 
+    // values inside a donut
+    let inner_label = pieSeries.children.push(
+      am5.Label.new(root, {
+        text: '[#ffffff]{valueSum}[/]\n[fontSize: 5px; #d3d3d3; verticalAlign: super]STRUCTURES[/]',
+        fontSize: '1rem',
+        centerX: am5.percent(50),
+        centerY: am5.percent(40),
+        populateText: true,
+        oversizedBehavior: 'fit',
+        textAlign: 'center',
+      }),
+    );
+
+    pieSeries.onPrivate('width', (width: any) => {
+      inner_label.set('maxWidth', width * 0.7);
+    });
+
     // Set slice opacity and stroke color
     pieSeries.slices.template.setAll({
+      toggleKey: 'none',
       fillOpacity: 0.9,
       stroke: am5.color('#ffffff'),
-      strokeWidth: 1,
+      strokeWidth: 0.5,
       strokeOpacity: 1,
       templateField: 'sliceSettings',
     });
@@ -197,12 +216,10 @@ const StructureChart = memo((props: any) => {
 
     // Legend
     // https://www.amcharts.com/docs/v5/charts/percent-charts/legend-percent-series/
-    var legend = root.container.children.push(
+    var legend = chart.children.push(
       am5.Legend.new(root, {
         centerX: am5.percent(50),
         x: am5.percent(50),
-        y: am5.percent(55),
-        layout: root.verticalLayout,
       }),
     );
     legendRef.current = legend;
@@ -226,7 +243,7 @@ const StructureChart = memo((props: any) => {
     // https://www.amcharts.com/docs/v5/tutorials/pie-chart-with-a-legend-with-dynamically-sized-labels/
     // This aligns Legend to Left
     chart.onPrivate('width', function (width: any) {
-      const boxWidth = 190; //props.style.width;
+      const boxWidth = 230; //props.style.width;
       var availableSpace = Math.max(width - chart.height() - boxWidth, boxWidth);
       //var availableSpace = (boxWidth - valueLabelsWidth) * 0.7
       legend.labels.template.setAll({
@@ -459,19 +476,6 @@ const StructureChart = memo((props: any) => {
       }); // End of whenLayerView
     });
 
-    // Chart title
-    chart.children.unshift(
-      am5.Label.new(root, {
-        text: 'MODE OF ACQUISITION',
-        fontSize: '1.1vw',
-        fontWeight: 'normal',
-        textAlign: 'left',
-        fill: am5.color('#f7f5f7'),
-        paddingTop: -21,
-        paddingLeft: 20,
-      }),
-    );
-
     yAxisRef.current = yAxis;
     yAxis.data.setAll(structureMoaData);
     series.data.setAll(structureMoaData);
@@ -493,51 +497,84 @@ const StructureChart = memo((props: any) => {
 
   return (
     <>
-      <div className="lotNumberImage">
-        <div>
-          <div className="totalStructuresLabel">TOTAL STRUCTURES </div>
-          <br />
-          <br />
-          <b className="totalLotsNumber">{thousands_separators(structureNumber[2])} </b>
-        </div>
-        <img
-          src="https://EijiGorilla.github.io/Symbols/House_Logo.svg"
-          alt="Structure Logo"
-          height={'19%'}
-          width={'19%'}
-          style={{ padding: '10px', margin: 'auto', marginRight: '40px' }}
-        />
+      <div
+        style={{
+          color: primaryLabelColor,
+          fontSize: '1.2rem',
+          marginLeft: '13px',
+          marginTop: '10px',
+        }}
+      >
+        TOTAL STRUCTURES
       </div>
+      <CalciteLabel layout="inline">
+        <b className="totalLotsNumber" style={{ color: valueLabelColor }}>
+          <div
+            style={{
+              color: valueLabelColor,
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              fontFamily: 'calibri',
+              lineHeight: '1.2',
+              marginLeft: '15px',
+            }}
+          >
+            {thousands_separators(structureNumber[2])}
+          </div>
+          <img
+            src="https://EijiGorilla.github.io/Symbols/House_Logo.svg"
+            alt="Land Logo"
+            height={'50px'}
+            width={'50px'}
+            style={{ marginLeft: '260px', display: 'flex', marginTop: '-50px' }}
+          />
+        </b>
+      </CalciteLabel>
+
+      {/* Structure Chart */}
       <div
         id={chartID}
         style={{
-          height: '45vh',
+          height: '41vh',
           backgroundColor: 'rgb(0,0,0,0)',
           color: 'white',
-          marginBottom: '-1.5vh',
+          marginBottom: '6%',
         }}
       ></div>
-      <div className="pteNumberImage">
-        <div>
-          <div className="permitToEnterLabel">PERMIT-TO-ENTER</div>
-          <br />
-          <br />
-          {/* If zero, display as zero else */}
-          {structureNumber[1] === 0 ? (
-            <b className="permitToEnterNumber">{structureNumber[0]}% (0)</b>
-          ) : (
-            <b className="permitToEnterNumber">
-              {structureNumber[0]}% ({thousands_separators(structureNumber[1])})
-            </b>
-          )}
-        </div>
+
+      <div
+        style={{
+          color: primaryLabelColor,
+          fontSize: '1.2rem',
+          // marginBottom: '13px',
+          marginLeft: '13px',
+        }}
+      >
+        PERMIT-TO-ENTER
+      </div>
+      <CalciteLabel layout="inline">
+        {structureNumber[1] === 0 ? (
+          <b className="permitToEnterNumber" style={{ color: valueLabelColor }}>
+            {structureNumber[0]}% (0)
+          </b>
+        ) : (
+          <b className="permitToEnterNumber" style={{ color: valueLabelColor }}>
+            {structureNumber[0]}% ({thousands_separators(structureNumber[1])})
+          </b>
+        )}
+
         <img
           src="https://EijiGorilla.github.io/Symbols/Permit-To-Enter.png"
           alt="Structure Logo"
-          height={'18%'}
-          width={'18%'}
-          style={{ padding: '10px', margin: 'auto', marginRight: '40px' }}
+          height={'50px'}
+          width={'50px'}
+          style={{ margin: 'auto', marginRight: '40px' }}
         />
+      </CalciteLabel>
+
+      {/* Mode of Acquisition */}
+      <div style={{ color: primaryLabelColor, fontSize: '1.2rem', marginLeft: '13px' }}>
+        MODE OF ACQUISITION
       </div>
       <div
         id={chartID_moa}

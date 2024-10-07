@@ -174,3 +174,7 @@ export const pierAccessValueDateColor = [
 // Handed Over Date and Handed Over Area
 export const lotHandedOverDateField = 'HandedOverDate';
 export const lotHandedOverAreaField = 'HandedOverArea';
+
+// Chart and chart label color
+export const primaryLabelColor = '#9ca3af';
+export const valueLabelColor = '#d1d5db';

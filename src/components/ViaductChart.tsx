@@ -6,6 +6,9 @@ import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
+import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import '@esri/calcite-components/dist/components/calcite-label';
+import { CalciteLabel } from '@esri/calcite-components-react';
 
 import '../App.css';
 import {
@@ -317,24 +320,43 @@ const ViaductChart = (props: any) => {
 
   return (
     <div>
-      <div className="lotNumberImage">
-        <div>
-          <div className="totalLotsLabel">TOTAL PROGRESS</div>
-          <br />
-          <br />
-          <b className="totalLotsNumber">
-            {thousands_separators(progress[2])} %{' '}
-            <div className="totalLotsNumber2">({thousands_separators(progress[0])})</div>
-          </b>
-        </div>
-        <img
-          src="https://EijiGorilla.github.io/Symbols/Viaduct_Images/Viaduct_All_Logo.svg"
-          alt="Utility Logo"
-          height={'15%'}
-          width={'15%'}
-          style={{ padding: '10px', margin: 'auto' }}
-        />
+      <div
+        style={{
+          color: primaryLabelColor,
+          fontSize: '1.2rem',
+          marginLeft: '13px',
+          marginTop: '10px',
+        }}
+      >
+        TOTAL PROGRESS
       </div>
+      <CalciteLabel layout="inline">
+        <b className="totalLotsNumber" style={{ color: valueLabelColor }}>
+          <div
+            style={{
+              color: valueLabelColor,
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              fontFamily: 'calibri',
+              lineHeight: '1.2',
+              marginLeft: '15px',
+            }}
+          >
+            <b className="totalLotsNumber" style={{ color: valueLabelColor }}>
+              {thousands_separators(progress[2])} %{' '}
+              <div className="totalLotsNumber2">({thousands_separators(progress[0])})</div>
+            </b>
+          </div>
+          <img
+            src="https://EijiGorilla.github.io/Symbols/Viaduct_Images/Viaduct_All_Logo.svg"
+            alt="Land Logo"
+            height={'50px'}
+            width={'50px'}
+            style={{ marginLeft: '260px', display: 'flex', marginTop: '-70px' }}
+          />
+        </b>
+      </CalciteLabel>
+
       <div
         id={chartID}
         style={{
