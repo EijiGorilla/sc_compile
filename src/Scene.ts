@@ -185,6 +185,16 @@ const sources = [
     zoomScale: 1000,
     placeholder: 'example: P-288',
   },
+  {
+    layer: treeCuttingLayer,
+    searchFields: ['TreeNo'],
+    displayField: 'TreeNo',
+    exactMatch: false,
+    outFields: ['TreeNo'],
+    name: 'Tree No.',
+    zoomScale: 1000,
+    placeholder: 'example: 20',
+  },
 ];
 
 const searchWidget = new Search({
