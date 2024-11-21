@@ -120,7 +120,7 @@ const StructureChart = memo((props: any) => {
         legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
         radius: am5.percent(45), // outer radius
         innerRadius: am5.percent(28),
-        scale: 2,
+        scale: 1.8,
       }),
     );
     pieSeriesRef.current = pieSeries;
@@ -129,8 +129,8 @@ const StructureChart = memo((props: any) => {
     // values inside a donut
     let inner_label = pieSeries.children.push(
       am5.Label.new(root, {
-        text: '[#ffffff]{valueSum}[/]\n[fontSize: 5px; #d3d3d3; verticalAlign: super]STRUCTURES[/]',
-        fontSize: '1rem',
+        text: '[#ffffff]{valueSum}[/]\n[fontSize: 0.5em; #d3d3d3; verticalAlign: super]STRUCTURES[/]',
+        fontSize: '1.1rem',
         centerX: am5.percent(50),
         centerY: am5.percent(40),
         populateText: true,
@@ -294,206 +294,206 @@ const StructureChart = memo((props: any) => {
   });
 
   // Mode of Acquisition
-  useEffect(() => {
-    // Dispose previously created root element
-    maybeDisposeRoot(chartID_moa);
+  // useEffect(() => {
+  //   // Dispose previously created root element
+  //   maybeDisposeRoot(chartID_moa);
 
-    var root = am5.Root.new(chartID_moa);
-    root.container.children.clear();
-    root._logo?.dispose();
+  //   var root = am5.Root.new(chartID_moa);
+  //   root.container.children.clear();
+  //   root._logo?.dispose();
 
-    // Set themesf
-    // https://www.amcharts.com/docs/v5/concepts/themes/
-    root.setThemes([am5themes_Animated.new(root), am5themes_Responsive.new(root)]);
+  //   // Set themesf
+  //   // https://www.amcharts.com/docs/v5/concepts/themes/
+  //   root.setThemes([am5themes_Animated.new(root), am5themes_Responsive.new(root)]);
 
-    // Create chart
-    // https://www.amcharts.com/docs/v5/charts/xy-chart/
-    var chart = root.container.children.push(
-      am5xy.XYChart.new(root, {
-        panX: false,
-        panY: false,
-        wheelX: 'none',
-        wheelY: 'none',
-        paddingLeft: 0,
-        marginTop: 20,
-        //height: am5.percent(81),
-      }),
-    );
-    chartRef_moa.current = chart;
+  //   // Create chart
+  //   // https://www.amcharts.com/docs/v5/charts/xy-chart/
+  //   var chart = root.container.children.push(
+  //     am5xy.XYChart.new(root, {
+  //       panX: false,
+  //       panY: false,
+  //       wheelX: 'none',
+  //       wheelY: 'none',
+  //       paddingLeft: 0,
+  //       marginTop: 20,
+  //       //height: am5.percent(81),
+  //     }),
+  //   );
+  //   chartRef_moa.current = chart;
 
-    // Create axes
-    // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
-    var yRenderer = am5xy.AxisRendererY.new(root, {
-      minGridDistance: 5,
-      strokeOpacity: 1,
-      strokeWidth: 1,
-      inversed: true,
-      stroke: am5.color('#ffffff'),
-    });
-    yRenderer.grid.template.set('location', 1);
+  //   // Create axes
+  //   // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+  //   var yRenderer = am5xy.AxisRendererY.new(root, {
+  //     minGridDistance: 5,
+  //     strokeOpacity: 1,
+  //     strokeWidth: 1,
+  //     inversed: true,
+  //     stroke: am5.color('#ffffff'),
+  //   });
+  //   yRenderer.grid.template.set('location', 1);
 
-    var yAxis = chart.yAxes.push(
-      am5xy.CategoryAxis.new(root, {
-        maxDeviation: 0,
-        categoryField: 'category',
-        renderer: yRenderer,
-      }),
-    );
+  //   var yAxis = chart.yAxes.push(
+  //     am5xy.CategoryAxis.new(root, {
+  //       maxDeviation: 0,
+  //       categoryField: 'category',
+  //       renderer: yRenderer,
+  //     }),
+  //   );
 
-    // Remove grid lines
-    yAxis.get('renderer').grid.template.set('forceHidden', true);
+  //   // Remove grid lines
+  //   yAxis.get('renderer').grid.template.set('forceHidden', true);
 
-    var xAxis = chart.xAxes.push(
-      am5xy.ValueAxis.new(root, {
-        maxDeviation: 0,
-        min: 0,
-        strictMinMax: true,
-        calculateTotals: true,
-        renderer: am5xy.AxisRendererX.new(root, {
-          visible: true,
-          strokeOpacity: 1,
-          strokeWidth: 1,
-          stroke: am5.color('#ffffff'),
-        }),
-      }),
-    );
-    // Remove grid lines
-    xAxis.get('renderer').grid.template.set('forceHidden', true);
+  //   var xAxis = chart.xAxes.push(
+  //     am5xy.ValueAxis.new(root, {
+  //       maxDeviation: 0,
+  //       min: 0,
+  //       strictMinMax: true,
+  //       calculateTotals: true,
+  //       renderer: am5xy.AxisRendererX.new(root, {
+  //         visible: true,
+  //         strokeOpacity: 1,
+  //         strokeWidth: 1,
+  //         stroke: am5.color('#ffffff'),
+  //       }),
+  //     }),
+  //   );
+  //   // Remove grid lines
+  //   xAxis.get('renderer').grid.template.set('forceHidden', true);
 
-    // Label properties for yAxis (category axis)
-    yAxis.get('renderer').labels.template.setAll({
-      //oversizedBehavior: "wrap",
-      textAlign: 'center',
-      fill: am5.color('#ffffff'),
-      //maxWidth: 150,
-      fontSize: 12,
-    });
+  //   // Label properties for yAxis (category axis)
+  //   yAxis.get('renderer').labels.template.setAll({
+  //     //oversizedBehavior: "wrap",
+  //     textAlign: 'center',
+  //     fill: am5.color('#ffffff'),
+  //     //maxWidth: 150,
+  //     fontSize: 12,
+  //   });
 
-    xAxis.get('renderer').labels.template.setAll({
-      fill: am5.color('#ffffff'),
-      fontSize: 10,
-    });
+  //   xAxis.get('renderer').labels.template.setAll({
+  //     fill: am5.color('#ffffff'),
+  //     fontSize: 10,
+  //   });
 
-    // Create series
-    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
-    var series = chart.series.push(
-      am5xy.ColumnSeries.new(root, {
-        name: 'Series 1',
-        xAxis: xAxis,
-        yAxis: yAxis,
-        valueXField: 'value',
-        sequencedInterpolation: true,
-        categoryYField: 'category',
-      }),
-    );
-    barSeriesRef.current = series;
-    chart.series.push(series);
+  //   // Create series
+  //   // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+  //   var series = chart.series.push(
+  //     am5xy.ColumnSeries.new(root, {
+  //       name: 'Series 1',
+  //       xAxis: xAxis,
+  //       yAxis: yAxis,
+  //       valueXField: 'value',
+  //       sequencedInterpolation: true,
+  //       categoryYField: 'category',
+  //     }),
+  //   );
+  //   barSeriesRef.current = series;
+  //   chart.series.push(series);
 
-    var columnTemplate = series.columns.template;
+  //   var columnTemplate = series.columns.template;
 
-    columnTemplate.setAll({
-      draggable: true,
-      cursorOverStyle: 'pointer',
-      tooltipText: '{value}',
-      cornerRadiusBR: 10,
-      cornerRadiusTR: 10,
-      strokeOpacity: 0,
-    });
+  //   columnTemplate.setAll({
+  //     draggable: true,
+  //     cursorOverStyle: 'pointer',
+  //     tooltipText: '{value}',
+  //     cornerRadiusBR: 10,
+  //     cornerRadiusTR: 10,
+  //     strokeOpacity: 0,
+  //   });
 
-    // Add Label bullet
-    series.bullets.push(function () {
-      return am5.Bullet.new(root, {
-        locationY: 1,
-        sprite: am5.Label.new(root, {
-          text: '{value}',
-          fill: root.interfaceColors.get('alternativeText'),
-          centerY: 8,
-          centerX: am5.p50,
-          fontSize: 13,
-          populateText: true,
-        }),
-      });
-    });
+  //   // Add Label bullet
+  //   series.bullets.push(function () {
+  //     return am5.Bullet.new(root, {
+  //       locationY: 1,
+  //       sprite: am5.Label.new(root, {
+  //         text: '{value}',
+  //         fill: root.interfaceColors.get('alternativeText'),
+  //         centerY: 8,
+  //         centerX: am5.p50,
+  //         fontSize: 13,
+  //         populateText: true,
+  //       }),
+  //     });
+  //   });
 
-    // Use different color by column
-    /*
-    columnTemplate.adapters.add('fill', (fill, target) => {
-      return chart.get('colors').getIndex(series.columns.indexOf(target));
-    });
+  //   // Use different color by column
+  //   /*
+  //   columnTemplate.adapters.add('fill', (fill, target) => {
+  //     return chart.get('colors').getIndex(series.columns.indexOf(target));
+  //   });
 
-    columnTemplate.adapters.add('stroke', (stroke, target) => {
-      return chart.get('colors').getIndex(series.columns.indexOf(target));
-    });
-    */
+  //   columnTemplate.adapters.add('stroke', (stroke, target) => {
+  //     return chart.get('colors').getIndex(series.columns.indexOf(target));
+  //   });
+  //   */
 
-    series.columns.template.events.on('click', function (ev) {
-      const selected: any = ev.target.dataItem?.dataContext;
-      const categorySelect: string = selected.category;
-      const find = statusMoaStructureChart.find((emp: any) => emp.category === categorySelect);
-      const statusSelect = find?.value;
+  //   series.columns.template.events.on('click', function (ev) {
+  //     const selected: any = ev.target.dataItem?.dataContext;
+  //     const categorySelect: string = selected.category;
+  //     const find = statusMoaStructureChart.find((emp: any) => emp.category === categorySelect);
+  //     const statusSelect = find?.value;
 
-      var highlightSelect: any;
+  //     var highlightSelect: any;
 
-      var query = structureLayer.createQuery();
-      view.whenLayerView(structureLayer).then(function (layerView) {
-        //CHART_ELEMENT.style.visibility = "visible";
+  //     var query = structureLayer.createQuery();
+  //     view.whenLayerView(structureLayer).then(function (layerView) {
+  //       //CHART_ELEMENT.style.visibility = "visible";
 
-        structureLayer.queryFeatures(query).then(function (results) {
-          const RESULT_LENGTH = results.features;
-          const ROW_N = RESULT_LENGTH.length;
+  //       structureLayer.queryFeatures(query).then(function (results) {
+  //         const RESULT_LENGTH = results.features;
+  //         const ROW_N = RESULT_LENGTH.length;
 
-          let objID = [];
-          for (var i = 0; i < ROW_N; i++) {
-            var obj = results.features[i].attributes.OBJECTID;
-            objID.push(obj);
-          }
+  //         let objID = [];
+  //         for (var i = 0; i < ROW_N; i++) {
+  //           var obj = results.features[i].attributes.OBJECTID;
+  //           objID.push(obj);
+  //         }
 
-          var queryExt = new Query({
-            objectIds: objID,
-          });
+  //         var queryExt = new Query({
+  //           objectIds: objID,
+  //         });
 
-          structureLayer.queryExtent(queryExt).then(function (result) {
-            if (result.extent) {
-              view.goTo(result.extent);
-            }
-          });
+  //         structureLayer.queryExtent(queryExt).then(function (result) {
+  //           if (result.extent) {
+  //             view.goTo(result.extent);
+  //           }
+  //         });
 
-          if (highlightSelect) {
-            highlightSelect.remove();
-          }
-          highlightSelect = layerView.highlight(objID);
+  //         if (highlightSelect) {
+  //           highlightSelect.remove();
+  //         }
+  //         highlightSelect = layerView.highlight(objID);
 
-          view.on('click', function () {
-            layerView.filter = new FeatureFilter({
-              where: undefined,
-            });
-            highlightSelect.remove();
-          });
-        });
-        layerView.filter = new FeatureFilter({
-          where: 'MoA = ' + statusSelect,
-        });
-      }); // End of whenLayerView
-    });
+  //         view.on('click', function () {
+  //           layerView.filter = new FeatureFilter({
+  //             where: undefined,
+  //           });
+  //           highlightSelect.remove();
+  //         });
+  //       });
+  //       layerView.filter = new FeatureFilter({
+  //         where: 'MoA = ' + statusSelect,
+  //       });
+  //     }); // End of whenLayerView
+  //   });
 
-    yAxisRef.current = yAxis;
-    yAxis.data.setAll(structureMoaData);
-    series.data.setAll(structureMoaData);
+  //   yAxisRef.current = yAxis;
+  //   yAxis.data.setAll(structureMoaData);
+  //   series.data.setAll(structureMoaData);
 
-    // Make stuff animate on load
-    // https://www.amcharts.com/docs/v5/concepts/animations/
-    series.appear(1000);
-    chart.appear(1000, 100);
+  //   // Make stuff animate on load
+  //   // https://www.amcharts.com/docs/v5/concepts/animations/
+  //   series.appear(1000);
+  //   chart.appear(1000, 100);
 
-    return () => {
-      root.dispose();
-    };
-  }, [chartID_moa, structureMoaData]);
+  //   return () => {
+  //     root.dispose();
+  //   };
+  // }, [chartID_moa, structureMoaData]);
 
-  useEffect(() => {
-    barSeriesRef.current?.data.setAll(structureMoaData);
-    yAxisRef.current?.data.setAll(structureMoaData);
-  });
+  // useEffect(() => {
+  //   barSeriesRef.current?.data.setAll(structureMoaData);
+  //   yAxisRef.current?.data.setAll(structureMoaData);
+  // });
 
   return (
     <>
@@ -535,10 +535,11 @@ const StructureChart = memo((props: any) => {
       <div
         id={chartID}
         style={{
-          height: '41vh',
+          height: '48vh',
           backgroundColor: 'rgb(0,0,0,0)',
           color: 'white',
-          marginBottom: '6%',
+          marginTop: '6%',
+          marginBottom: '10%',
         }}
       ></div>
 
@@ -573,7 +574,7 @@ const StructureChart = memo((props: any) => {
       </CalciteLabel>
 
       {/* Mode of Acquisition */}
-      <div style={{ color: primaryLabelColor, fontSize: '1.2rem', marginLeft: '13px' }}>
+      {/* <div style={{ color: primaryLabelColor, fontSize: '1.2rem', marginLeft: '13px' }}>
         MODE OF ACQUISITION
       </div>
       <div
@@ -583,7 +584,7 @@ const StructureChart = memo((props: any) => {
           backgroundColor: 'rgb(0,0,0,0)',
           color: 'white',
         }}
-      ></div>
+      ></div> */}
     </>
   );
 }); // End of lotChartgs

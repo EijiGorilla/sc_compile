@@ -29,6 +29,7 @@ import {
   utilityLineLayer,
   utilityLineLayer1,
   viaductLayer,
+  cp_break_lines,
 } from './layers';
 import { highlightLot } from './Query';
 
@@ -42,7 +43,7 @@ const alignmentGroupLayer = new GroupLayer({
   title: 'Alignment',
   visible: true,
   visibilityMode: 'independent',
-  layers: [stationLayer, stationBoxLayer, pierHeadColumnLayer, chainageLayer],
+  layers: [stationLayer, stationBoxLayer, pierHeadColumnLayer, chainageLayer, cp_break_lines],
 });
 
 const nloLoOccupancyGroupLayer = new GroupLayer({
