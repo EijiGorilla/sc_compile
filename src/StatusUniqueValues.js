@@ -1,5 +1,17 @@
 // Lot Status
 export const lotStatusField = 'StatusLA';
+export const lotIdField = 'LotID';
+export const percentHandedOverField = 'percentHandedOver';
+export const municipalityField = 'Municipality';
+export const barangayField = 'Barangay';
+export const landOwnerField = 'LandOwner';
+export const cpField = 'CP';
+export const landUseField = 'LandUse';
+export const endorsedField = 'Endorsed';
+export const handedOverLotField = 'HandedOver';
+export const lotHandedOverDateField = 'HandedOverDate';
+export const lotHandedOverAreaField = 'HandedOverArea';
+export const affectedAreaField = 'AffectedArea';
 export const lotStatusLabel = [
   'Paid',
   'For Payment Processing',
@@ -170,10 +182,6 @@ export const pierAccessValueDateColor = [
   [0, 255, 0, 0.9], // Accessible
   [255, 255, 255, 0.9], // Dates are missing
 ];
-
-// Handed Over Date and Handed Over Area
-export const lotHandedOverDateField = 'HandedOverDate';
-export const lotHandedOverAreaField = 'HandedOverArea';
 
 // Chart and chart label color
 export const primaryLabelColor = '#9ca3af';

@@ -28,6 +28,7 @@ import RotationVariable from '@arcgis/core/renderers/visualVariables/RotationVar
 import { labelSymbol3DLine } from './Label';
 import ColorVariable from '@arcgis/core/renderers/visualVariables/ColorVariable';
 import {
+  handedOverLotField,
   lotStatusColor,
   lotStatusField,
   lotStatusLabel,
@@ -630,17 +631,18 @@ export const lotLayer = new FeatureLayer({
 
 /* Handed-Over Lot (public + private) */
 const handedOverLotRenderer = new UniqueValueRenderer({
-  field: 'HandedOver',
+  field: handedOverLotField,
+
   uniqueValueInfos: [
     {
       value: 1,
       label: 'Handed-Over',
       symbol: new SimpleFillSymbol({
-        color: [255, 0, 0, 0],
-        outline: {
-          color: '#00c5ff',
-          width: 0.3,
-        },
+        color: [0, 255, 255, 0.3], //[0, 255, 255, 0.1], #00ffff
+        outline: new SimpleLineSymbol({
+          color: '#00ffff',
+          width: '4px',
+        }),
       }),
     },
   ],
@@ -654,7 +656,7 @@ export const handedOverLotLayer = new FeatureLayer({
     },
   },
   layerId: 1,
-  definitionExpression: 'HandedOver = 1',
+  definitionExpression: `${handedOverLotField} = 1`,
   renderer: handedOverLotRenderer,
   popupEnabled: false,
   labelsVisible: false,
@@ -663,6 +665,7 @@ export const handedOverLotLayer = new FeatureLayer({
     mode: 'on-the-ground',
   },
 });
+handedOverLotLayer.listMode = 'hide';
 
 /* Structure Layer */
 const height = 5;

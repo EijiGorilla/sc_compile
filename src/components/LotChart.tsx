@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { lotLayer } from '../layers';
+import { handedOverLotLayer, lotLayer } from '../layers';
 import { view } from '../Scene';
 import FeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import Query from '@arcgis/core/rest/support/Query';
@@ -20,8 +20,9 @@ import {
 } from '../Query';
 import '../App.css';
 import '@esri/calcite-components/dist/components/calcite-label';
-import { CalciteLabel } from '@esri/calcite-components-react';
-import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import '@esri/calcite-components/dist/components/calcite-checkbox';
+import { CalciteLabel, CalciteCheckbox } from '@esri/calcite-components-react';
+import { cpField, primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -61,15 +62,28 @@ const LotChart = (props: any) => {
   const [lotMoaData, setLotMoaData] = useState([]);
   const chartID_moa = 'land-moa';
 
+  // Handed Over View checkbox
+  const [handedOverCheckBox, setHandedOverCheckBox] = useState<boolean>(false);
+
   // Query
   const queryDefault = '1=1';
-  const queryContractp = "CP = '" + props.contractp + "'";
+  const queryContractp = `${cpField} = '` + props.contractp + "'";
 
   if (props.contractp === 'All') {
     lotLayer.definitionExpression = queryDefault;
+    handedOverLotLayer.definitionExpression = queryDefault;
   } else {
     lotLayer.definitionExpression = queryContractp;
+    handedOverLotLayer.definitionExpression = queryContractp;
   }
+
+  useEffect(() => {
+    if (handedOverCheckBox === true) {
+      handedOverLotLayer.visible = true;
+    } else {
+      handedOverLotLayer.visible = false;
+    }
+  }, [handedOverCheckBox]);
 
   useEffect(() => {
     generateLotData().then((result: any) => {
@@ -549,17 +563,30 @@ const LotChart = (props: any) => {
       ></div>
 
       {/* Handed-Over */}
-      <div
-        style={{
-          color: primaryLabelColor,
-          fontSize: '1.2rem',
-          marginBottom: '13px',
-          marginLeft: '13px',
-          marginTop: '15px',
-        }}
-      >
-        HANDED-OVER
+      <div style={{ display: 'flex' }}>
+        <div
+          style={{
+            color: primaryLabelColor,
+            fontSize: '1.2rem',
+            marginLeft: '13px',
+            marginBottom: '13px',
+            marginRight: '10px',
+          }}
+        >
+          HANDED-OVER
+        </div>
+        <CalciteCheckbox
+          name="handover-checkbox"
+          label="VIEW"
+          style={{ width: '20px' }}
+          scale="l"
+          onCalciteCheckboxChange={(event: any) =>
+            setHandedOverCheckBox(handedOverCheckBox === false ? true : false)
+          }
+        ></CalciteCheckbox>
+        <div style={{ color: primaryLabelColor }}>View on the map</div>
       </div>
+
       <CalciteLabel layout="inline">
         {handedOverNumber[0] === 'Infinity' ? (
           <b className="permitToEnterNumber" style={{ color: valueLabelColor }}>
@@ -569,7 +596,7 @@ const LotChart = (props: any) => {
               alt="Land Logo"
               height={'50px'}
               width={'50px'}
-              style={{ marginLeft: '260px', display: 'flex', marginTop: '-70px' }}
+              style={{ marginLeft: '260px', display: 'flex', marginTop: '-60px' }}
             />
           </b>
         ) : (
@@ -593,7 +620,7 @@ const LotChart = (props: any) => {
               alt="Land Logo"
               height={'50px'}
               width={'50px'}
-              style={{ marginLeft: '260px', display: 'flex', marginTop: '-70px' }}
+              style={{ marginLeft: '260px', display: 'flex', marginTop: '-60px' }}
             />
           </b>
         )}

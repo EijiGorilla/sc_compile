@@ -57,7 +57,7 @@ const lotGroupLayer = new GroupLayer({
   title: 'Land',
   visible: true,
   visibilityMode: 'independent',
-  layers: [lotLayer, handedOverLotLayer, pnrLayer],
+  layers: [lotLayer, pnrLayer],
 });
 
 const treeGroupLayer = new GroupLayer({
@@ -84,6 +84,7 @@ map.add(structureLayer);
 map.add(nloLoOccupancyGroupLayer);
 map.add(alignmentGroupLayer);
 map.add(prowLayer);
+map.add(handedOverLotLayer);
 
 export const view = new SceneView({
   container: undefined,
@@ -126,7 +127,7 @@ export const layerList = new LayerList({
     item.title === 'Occupancy (Structure)' ||
     item.title === 'Structure' ||
     item.title === 'Land Acquisition (Endorsed Status)' ||
-    item.title === 'Handed-Over (public + private)' ||
+    // item.title === 'Handed-Over (public + private)' ||
     item.title === 'Tree Cutting' ||
     item.title === 'Tree Compensation' ||
     item.title === 'Point Symbol' ||
