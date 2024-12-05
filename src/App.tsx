@@ -25,9 +25,9 @@ import {
   CalciteShellPanel,
   CalciteActionBar,
   CalciteAction,
-  CalciteSwitch,
   CalciteTabs,
   CalcitePanel,
+  CalciteSwitch,
   CalciteList,
   CalciteListItem,
   CalciteSegmentedControl,
@@ -396,7 +396,7 @@ function App() {
           className="groundSwitchDiv"
           style={{
             position: 'fixed',
-            zIndex: 1,
+            zIndex: 10,
             bottom: 10,
             right: '470px',
             color: 'white',
