@@ -10,7 +10,7 @@ import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
 import { generateNloData, generateNloNumber, statusNloChart, thousands_separators } from '../Query';
 import '@esri/calcite-components/dist/components/calcite-label';
 import { CalciteLabel } from '@esri/calcite-components-react';
-import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import { nloStatusField, primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -182,7 +182,7 @@ const NloChart = memo((props: any) => {
           }); // End of queryFeatures
 
           layerView.filter = new FeatureFilter({
-            where: 'StatusLA = ' + typeSelect,
+            where: `${nloStatusField} = ` + typeSelect,
           });
         }); // End of view.whenLayerView
       }); // End of view.whenv
