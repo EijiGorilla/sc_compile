@@ -174,37 +174,42 @@ function App() {
 
             {/* CalciteTab: Structure */}
             <CalciteTab>
-              {tabCheckedName === 'Structure' && (
+              {/* {tabCheckedName === 'Structure' && (
                 <StructureChart contractp={!cpValueSelected ? '' : cpValueSelected} />
-              )}
+              )} */}
+              <StructureChart contractp={!cpValueSelected ? '' : cpValueSelected} />
             </CalciteTab>
 
             {/* CalciteTab: Non-Land Owner */}
             <CalciteTab>
-              {tabCheckedName === 'NLO' && (
+              {/* {tabCheckedName === 'NLO' && (
                 <NloChart contractp={!cpValueSelected ? '' : cpValueSelected} />
-              )}
+              )} */}
+              <NloChart contractp={!cpValueSelected ? '' : cpValueSelected} />
             </CalciteTab>
 
             {/* CalciteTab: Trees */}
             <CalciteTab>
-              {tabCheckedName === 'Tree' && (
+              {/* {tabCheckedName === 'Tree' && (
                 <TreeChart contractp={!cpValueSelected ? '' : cpValueSelected} />
-              )}
+              )} */}
+              <TreeChart contractp={!cpValueSelected ? '' : cpValueSelected} />
             </CalciteTab>
 
             {/* CalciteTab: Utility */}
             <CalciteTab>
-              {tabCheckedName === 'Utility' && (
+              {/* {tabCheckedName === 'Utility' && (
                 <UtilityChart contractp={!cpValueSelected ? '' : cpValueSelected} />
-              )}
+              )} */}
+              <UtilityChart contractp={!cpValueSelected ? '' : cpValueSelected} />
             </CalciteTab>
 
             {/* CalciteTab: Viaduct */}
             <CalciteTab>
-              {tabCheckedName === 'Viaduct' && (
+              {/* {tabCheckedName === 'Viaduct' && (
                 <ViaductChart contractp={!cpValueSelected ? '' : cpValueSelected} />
-              )}
+              )} */}
+              <ViaductChart contractp={!cpValueSelected ? '' : cpValueSelected} />
             </CalciteTab>
           </div>
         </CalciteTabs>
