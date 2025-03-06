@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { view } from '../Scene';
 import {
   utilityPointLayer1,
@@ -23,6 +23,7 @@ import {
   utilityTypeChart,
 } from '../Query';
 import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import { useContractPackageContext } from './ContractPackageContext';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -34,7 +35,9 @@ function maybeDisposeRoot(divId: any) {
 }
 
 // Draw chart
-const UtilityChart = (props: any) => {
+const UtilityChart = () => {
+  const { cpValueSelected } = useContractPackageContext();
+
   // utility point
   const chartRef = useRef<unknown | any | undefined>({});
   const [pointChartData, setPointChartData] = useState([]);
@@ -48,9 +51,9 @@ const UtilityChart = (props: any) => {
   const [progress, setProgress] = useState([]);
 
   const defaultQuery = '1=1';
-  const qContractp = "CP = '" + props.contractp + "'";
+  const qContractp = "CP = '" + cpValueSelected + "'";
 
-  if (props.contractp === 'All') {
+  if (cpValueSelected === 'All') {
     utilityPointLayer.definitionExpression = defaultQuery;
     utilityPointLayer1.definitionExpression = defaultQuery;
     utilityLineLayer.definitionExpression = defaultQuery;
@@ -71,10 +74,10 @@ const UtilityChart = (props: any) => {
       setLineChartData(response);
     });
 
-    generateUtilityNumbers(props.contractp).then((response: any) => {
+    generateUtilityNumbers(cpValueSelected).then((response: any) => {
       setProgress(response);
     });
-  }, [props.contractp]);
+  }, [cpValueSelected]);
 
   // Define parameters
   const marginTop = 0;
@@ -277,7 +280,7 @@ const UtilityChart = (props: any) => {
         const defaultExpression = '1=1';
         const sqlExpression =
           "CP = '" +
-          props.contractp +
+          cpValueSelected +
           "'" +
           ' AND ' +
           'UtilType = ' +
@@ -287,7 +290,7 @@ const UtilityChart = (props: any) => {
           selectedStatus;
         // Define Query
         var query = utilityPointLayer.createQuery();
-        query.where = props.contractp === 'All' ? defaultExpression : sqlExpression;
+        query.where = cpValueSelected === 'All' ? defaultExpression : sqlExpression;
 
         let highlightSelect: any;
         view.when(() => {
@@ -325,12 +328,12 @@ const UtilityChart = (props: any) => {
               });
             });
             layerView.filter = new FeatureFilter({
-              where: props.contractp === 'All' ? defaultExpression : sqlExpression,
+              where: cpValueSelected === 'All' ? defaultExpression : sqlExpression,
             });
           });
 
           var query1 = utilityPointLayer.createQuery();
-          query1.where = props.contractp === 'All' ? defaultExpression : sqlExpression;
+          query1.where = cpValueSelected === 'All' ? defaultExpression : sqlExpression;
 
           view.whenLayerView(utilityPointLayer1).then((layerView: any) => {
             utilityPointLayer1.queryFeatures(query1).then((results: any) => {
@@ -366,7 +369,7 @@ const UtilityChart = (props: any) => {
               });
             });
             layerView.filter = new FeatureFilter({
-              where: props.contractp === 'All' ? defaultExpression : sqlExpression,
+              where: cpValueSelected === 'All' ? defaultExpression : sqlExpression,
             });
           });
         });
@@ -557,7 +560,7 @@ const UtilityChart = (props: any) => {
         const defaultExpression = '1=1';
         const sqlExpression =
           "CP = '" +
-          props.contractp +
+          cpValueSelected +
           "'" +
           ' AND ' +
           'UtilType = ' +
@@ -567,7 +570,7 @@ const UtilityChart = (props: any) => {
           selectedStatus;
         // Define Query
         var query = utilityLineLayer.createQuery();
-        query.where = props.contractp === 'All' ? defaultExpression : sqlExpression;
+        query.where = cpValueSelected === 'All' ? defaultExpression : sqlExpression;
 
         let highlightSelect: any;
         view.when(() => {
@@ -605,12 +608,12 @@ const UtilityChart = (props: any) => {
               });
             });
             layerView.filter = new FeatureFilter({
-              where: props.contractp === 'All' ? defaultExpression : sqlExpression,
+              where: cpValueSelected === 'All' ? defaultExpression : sqlExpression,
             });
           });
 
           var query1 = utilityLineLayer.createQuery();
-          query1.where = props.contractp === 'All' ? defaultExpression : sqlExpression;
+          query1.where = cpValueSelected === 'All' ? defaultExpression : sqlExpression;
 
           view.whenLayerView(utilityLineLayer1).then((layerView: any) => {
             utilityLineLayer1.queryFeatures(query1).then((results: any) => {
@@ -646,7 +649,7 @@ const UtilityChart = (props: any) => {
               });
             });
             layerView.filter = new FeatureFilter({
-              where: props.contractp === 'All' ? defaultExpression : sqlExpression,
+              where: cpValueSelected === 'All' ? defaultExpression : sqlExpression,
             });
           });
         });

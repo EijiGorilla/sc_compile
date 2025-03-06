@@ -3,11 +3,18 @@ import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
-import { dateFormat, generateLotProgress } from '../Query';
+import { lastDateOfMonth, timeSeriesHandedOverChartData } from '../Query';
 import { lotLayer } from '../layers';
 import { view } from '../Scene';
 import Query from '@arcgis/core/rest/support/Query';
 import FeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
+import { useContractPackageContext } from './ContractPackageContext';
+import {
+  cpField,
+  lotHandedOverDateField,
+  lotHandOverDateField,
+  lotTargetActualField,
+} from '../StatusUniqueValues';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -17,7 +24,9 @@ function maybeDisposeRoot(divId: any) {
     }
   });
 }
-const LotProgressChart = (props: any) => {
+const LotProgressChart = () => {
+  const { cpValueSelected } = useContractPackageContext();
+
   const legendRef = useRef<unknown | any | undefined>({});
   const xAxisRef = useRef<unknown | any | undefined>({});
   const yAxisRef = useRef<unknown | any | undefined>({});
@@ -26,10 +35,13 @@ const LotProgressChart = (props: any) => {
 
   const chartID = 'lot-progress';
   useEffect(() => {
-    generateLotProgress(props.contractp).then((result: any) => {
+    // generateLotProgress(municipal, barangay).then((result: any) => {
+    //   setLotProgressData(result);
+    // });
+    timeSeriesHandedOverChartData(cpValueSelected).then((result: any) => {
       setLotProgressData(result);
     });
-  }, [props.contractp]);
+  }, [cpValueSelected]);
 
   useEffect(() => {
     maybeDisposeRoot(chartID);
@@ -50,14 +62,31 @@ const LotProgressChart = (props: any) => {
         wheelX: 'panX',
         wheelY: 'zoomX',
         paddingBottom: 35,
+        layout: root.verticalLayout,
       }),
     );
     chartRef.current = chart;
 
+    let scrollbarY1 = am5xy.XYChartScrollbar.new(root, {
+      orientation: 'vertical',
+      // height: 50,
+      // width: 1,
+    });
+
+    scrollbarY1.startGrip.set('scale', 0.7);
+    scrollbarY1.endGrip.set('scale', 0.7);
+
+    chart.set('scrollbarY', scrollbarY1);
+    let scrollbarY2 = chart.get('scrollbarY');
+    scrollbarY2?.get('background')?.setAll({
+      fill: am5.color('#ffffff'),
+      fillOpacity: 0.2,
+    });
+
     // Chart title
     chart.children.unshift(
       am5.Label.new(root, {
-        text: 'Monthly Progress of Handed-Over Lots',
+        text: 'Monthly Progress & Target Schedule of Handed Over Lots',
         fontSize: 14,
         fontWeight: 'bold',
         textAlign: 'center',
@@ -65,7 +94,7 @@ const LotProgressChart = (props: any) => {
         x: am5.percent(50),
         centerX: am5.percent(50),
         paddingTop: 0,
-        paddingBottom: 0,
+        marginBottom: 10,
       }),
     );
 
@@ -81,39 +110,38 @@ const LotProgressChart = (props: any) => {
 
     // Create axes
     // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+    var xRenderer = am5xy.AxisRendererX.new(root, {
+      //minGridDistance: 60,
+      strokeOpacity: 1,
+      strokeWidth: 1,
+      stroke: am5.color('#ffffff'),
+    });
     var xAxis = chart.xAxes.push(
       am5xy.DateAxis.new(root, {
+        // When you group data for series
+        // Note you need to baseInterval timeUnit is 'day'
+        // and groupIntervals timeUnit is 'month'
         maxDeviation: 0,
         groupData: true,
         baseInterval: {
           timeUnit: 'day',
           count: 1,
         },
+        // count:
         groupIntervals: [{ timeUnit: 'month', count: 1 }],
-        renderer: am5xy.AxisRendererX.new(root, {
-          minGridDistance: 60,
-          strokeOpacity: 1,
-          strokeWidth: 1,
-          stroke: am5.color('#ffffff'),
-        }),
-
-        //tooltip: am5.Tooltip.new(root, {})
+        // categoryField: 'date',
+        renderer: xRenderer,
+        tooltip: am5.Tooltip.new(root, {}),
       }),
     );
 
-    let xRenderer = xAxis.get('renderer');
-    xRenderer.labels.template.setAll({
-      //oversizedBehavior: "wrap",
-      textAlign: 'center',
-      fill: am5.color('#ffffff'),
-      //maxWidth: 150,
-      fontSize: 12,
-    });
-
     var yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
-        calculateTotals: true,
+        // calculateTotals: true,
         min: 0,
+        // max: 100,
+        // numberFormat: "#'%'",
+        strictMinMax: true,
         renderer: am5xy.AxisRendererY.new(root, {
           minGridDistance: 60,
           strokeOpacity: 1,
@@ -122,6 +150,14 @@ const LotProgressChart = (props: any) => {
         }),
       }),
     );
+
+    xAxis.get('renderer').labels.template.setAll({
+      //oversizedBehavior: "wrap",
+      textAlign: 'center',
+      fill: am5.color('#ffffff'),
+      //maxWidth: 150,
+      fontSize: 12,
+    });
 
     yAxis.get('renderer').labels.template.setAll({
       //oversizedBehavior: "wrap",//
@@ -137,7 +173,7 @@ const LotProgressChart = (props: any) => {
     yAxis.children.unshift(
       am5.Label.new(root, {
         rotation: -90,
-        text: 'No. of handed-over lots',
+        // text: 'No. of casted components',
         y: am5.p50,
         centerX: am5.p50,
         fill: am5.color('#ffffff'),
@@ -153,6 +189,7 @@ const LotProgressChart = (props: any) => {
         centerY: am5.percent(50),
         x: am5.p50,
         y: am5.percent(108),
+        marginTop: -20,
       }),
     );
     legendRef.current = legend;
@@ -161,98 +198,131 @@ const LotProgressChart = (props: any) => {
       oversizedBehavior: 'truncate',
       fill: am5.color('#ffffff'),
       fontSize: 17,
-      scale: 0.8,
+      scale: 0.7,
       //textDecoration: "underline"
       //width: am5.percent(200)
       //fontWeight: "300"
     });
 
+    // check this;
+    // newDataItem = new DataItem(series, dataContext, series._makeDataItem(dataContext));
+    // dataItem is of dataItems
+    // dataContext: dataItem.dataContext
+
     // Add series
-    var series = chart.series.push(
-      am5xy.ColumnSeries.new(root, {
-        name: 'Series',
-        xAxis: xAxis,
-        yAxis: yAxis,
-        valueYField: 'value',
-        valueXField: 'date',
-        valueYGrouped: 'sum',
-      }),
-    );
-
-    series.bullets.push(function () {
-      return am5.Bullet.new(root, {
-        locationY: 1,
-        locationX: 0.5,
-        sprite: am5.Label.new(root, {
-          text: '{valueYTotal}',
-          fill: root.interfaceColors.get('alternativeText'),
-          centerY: 0,
-          centerX: am5.p50,
-          populateText: true,
-          fontSize: 10,
+    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+    function makeSeries(name: any, fieldName: any, color: any) {
+      var series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+          name: name,
+          stacked: true,
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: fieldName,
+          valueXField: 'date',
+          // valueYShow: 'valueYTotalPercent',
+          categoryXField: 'date',
+          fill: color,
+          stroke: color,
+          // valueYGrouped: 'sum',
         }),
-      });
-    });
+      );
 
-    var highlightSelect: any;
-    series.columns.template.events.on('click', (ev) => {
-      const selected: any = ev.target.dataItem?.dataContext;
-      const selectedDate = dateFormat(selected.date, 'yyyy-MM-dd');
+      // select chart series and filter
+      var highlightSelect: any;
+      series.columns.template.events.on('click', (ev) => {
+        // const qExpression =
+        const select: any = ev.target.dataItem?.dataContext;
+        const raw_date = new Date(select?.date);
+        const last_date = lastDateOfMonth(new Date(raw_date));
+        const qDate =
+          fieldName === 'target'
+            ? `${lotHandOverDateField} <= date'` + last_date + "'"
+            : `${lotHandedOverDateField} <= date'` + last_date + "'";
+        const status = fieldName === 'target' ? 1 : 2;
 
-      // const qExpression =
-      const queryDefault = '1=1';
-      const queryContractp = "CP = '" + props.contractp + "'";
-      const qDate =
-        'HandedOverDate IS NOT NULL' + ' AND ' + "HandedOverDate = date'" + selectedDate + "'";
+        const qSelected = `${lotTargetActualField} = ` + status;
+        const queryDefault = '1=1';
+        const queryContractp = `${cpField} = '` + cpValueSelected + "'";
 
-      var query = lotLayer.createQuery();
-      if (props.contractp === 'All') {
-        query.where = qDate + ' AND ' + queryDefault;
-      } else {
-        query.where = qDate + ' AND ' + queryContractp;
-      }
+        let layerViewFilter: any;
 
-      view.whenLayerView(lotLayer).then((layerView: any) => {
-        lotLayer.queryFeatures(query).then((results: any) => {
-          const RESULT_LENGTH = results.features;
-          const ROW_N = RESULT_LENGTH.length;
+        var query = lotLayer.createQuery();
 
-          let objID = [];
-          for (var i = 0; i < ROW_N; i++) {
-            var obj = results.features[i].attributes.OBJECTID;
-            objID.push(obj);
-          }
+        if (cpValueSelected === 'All') {
+          query.where = queryDefault + ' AND ' + qSelected + ' AND ' + qDate;
+          layerViewFilter = queryDefault + ' AND ' + qSelected + ' AND ' + qDate;
+        } else {
+          query.where = queryContractp + ' AND ' + qSelected + ' AND ' + qDate;
+          layerViewFilter = queryContractp + ' AND ' + qSelected + ' AND ' + qDate;
+        }
 
-          var queryExt = new Query({
-            objectIds: objID,
-          });
+        view.whenLayerView(lotLayer).then((layerView: any) => {
+          lotLayer.queryFeatures(query).then((results: any) => {
+            const RESULT_LENGTH = results.features;
+            const ROW_N = RESULT_LENGTH.length;
 
-          lotLayer.queryExtent(queryExt).then(function (result) {
-            if (result.extent) {
-              view.goTo(result.extent);
+            let objID = [];
+            for (var i = 0; i < ROW_N; i++) {
+              var obj = results.features[i].attributes.OBJECTID;
+              objID.push(obj);
             }
-          });
 
-          if (highlightSelect) {
-            highlightSelect.remove();
-          }
-          highlightSelect = layerView.highlight(objID);
-
-          view.on('click', function () {
-            layerView.filter = new FeatureFilter({
-              where: undefined,
+            var queryExt = new Query({
+              objectIds: objID,
             });
-            highlightSelect.remove();
+
+            lotLayer.queryExtent(queryExt).then(function (result) {
+              if (result.extent) {
+                view.goTo(result.extent);
+              }
+            });
+
+            if (highlightSelect) {
+              highlightSelect.remove();
+            }
+            highlightSelect = layerView.highlight(objID);
+
+            view.on('click', function () {
+              layerView.filter = new FeatureFilter({
+                where: undefined,
+              });
+              highlightSelect.remove();
+            });
           });
+          layerView.filter = new FeatureFilter({
+            where: layerViewFilter,
+          });
+        }); // End of whenLayerView
+      });
+
+      series.columns.template.setAll({
+        tooltipText: '{name}: {valueY} ({valueYTotalPercent.formatNumber("#.#")}%)',
+        tooltipY: am5.percent(10),
+      });
+      series.data.setAll(lotProgressData);
+
+      // Make stuff animate on load
+      // https://www.amcharts.com/docs/v5/concepts/animations/
+      series.appear();
+
+      series.bullets.push(function () {
+        return am5.Bullet.new(root, {
+          sprite: am5.Label.new(root, {
+            text: '{valueY}',
+            fill: root.interfaceColors.get('alternativeText'),
+            centerY: am5.p50,
+            centerX: am5.p50,
+            populateText: true,
+          }),
         });
-      }); // End of whenLayerView
-    });
-    series.columns.template.setAll({
-      tooltipText: 'Total: {valueY}',
-      tooltipY: am5.percent(10),
-      strokeOpacity: 0,
-    });
-    series.data.setAll(lotProgressData);
+      });
+
+      legend.data.push(series);
+    }
+
+    makeSeries('Actual', 'actual', am5.color('#0096FF'));
+    makeSeries('Target', 'target', am5.color('#FF5733'));
 
     chart.appear(1000, 100);
 
@@ -266,16 +336,15 @@ const LotProgressChart = (props: any) => {
       <div
         id={chartID}
         style={{
-          height: '32vh',
-          width: '67%',
+          height: '40vh',
+          width: '70%',
           backgroundColor: '#2b2b2b',
           color: 'white',
-          position: 'absolute',
-          zIndex: 99,
-          bottom: 10,
-          marginLeft: '1vw',
+          position: 'fixed',
+          zIndex: 10,
+          bottom: 0,
+          marginLeft: 'auto',
           marginRight: 'auto',
-          border: 'solid 0.1px gray',
         }}
       ></div>
     </>

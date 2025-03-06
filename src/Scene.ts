@@ -215,7 +215,6 @@ export const searchExpand = new Expand({
   group: 'top-right',
 });
 
-const zoom = new Zoom({
+export const zoom = new Zoom({
   view,
 });
-view.ui.add(zoom, { position: 'bottom-right' });

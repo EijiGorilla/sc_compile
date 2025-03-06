@@ -9,9 +9,12 @@ export const cpField = 'CP';
 export const landUseField = 'LandUse';
 export const endorsedField = 'Endorsed';
 export const handedOverLotField = 'HandedOver';
+export const lotTargetActualField = 'TargetActual';
+export const lotTargetActualDateField = 'TargetActualDate';
 export const lotHandedOverDateField = 'HandedOverDate';
 export const lotHandedOverAreaField = 'HandedOverArea';
 export const affectedAreaField = 'AffectedArea';
+export const lotHandOverDateField = 'HandOverDate';
 export const lotStatusLabel = [
   'Paid',
   'For Payment Processing',

@@ -11,6 +11,7 @@ import { generateNloData, generateNloNumber, statusNloChart, thousands_separator
 import '@esri/calcite-components/dist/components/calcite-label';
 import { CalciteLabel } from '@esri/calcite-components-react';
 import { nloStatusField, primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import { useContractPackageContext } from './ContractPackageContext';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -24,7 +25,9 @@ function maybeDisposeRoot(divId: any) {
 ///*** Others */
 
 /// Draw chart
-const NloChart = memo((props: any) => {
+const NloChart = memo(() => {
+  const { cpValueSelected } = useContractPackageContext();
+
   const pieSeriesRef = useRef<unknown | any | undefined>({});
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
@@ -43,9 +46,9 @@ const NloChart = memo((props: any) => {
 
   // Query
   const queryDefault = '1=1';
-  const queryContractp = "CP = '" + props.contractp + "'";
+  const queryContractp = "CP = '" + cpValueSelected + "'";
 
-  if (props.contractp === 'All') {
+  if (cpValueSelected === 'All') {
     nloLayer.definitionExpression = queryDefault;
   } else {
     nloLayer.definitionExpression = queryContractp;
@@ -60,7 +63,7 @@ const NloChart = memo((props: any) => {
     generateNloNumber().then((response: any) => {
       setNloNumber(response);
     });
-  }, [props.contractp]);
+  }, [cpValueSelected]);
 
   useEffect(() => {
     // Dispose previously created root element
@@ -309,7 +312,7 @@ const NloChart = memo((props: any) => {
       <div
         id={chartID}
         style={{
-          height: '45vh',
+          height: '50vh',
           backgroundColor: 'rgb(0,0,0,0)',
           color: 'white',
           marginBottom: '-1.5vh',

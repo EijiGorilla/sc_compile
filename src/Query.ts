@@ -16,7 +16,25 @@ import StatisticDefinition from '@arcgis/core/rest/support/StatisticDefinition';
 import * as am5 from '@amcharts/amcharts5';
 import { view } from './Scene';
 import Query from '@arcgis/core/rest/support/Query';
-import { lotStatusColor, lotStatusLabel } from './StatusUniqueValues';
+import {
+  cpField,
+  lotHandedOverAreaField,
+  lotIdField,
+  lotStatusColor,
+  lotStatusLabel,
+  lotTargetActualDateField,
+} from './StatusUniqueValues';
+
+// get last date of month
+export function lastDateOfMonth(date: Date) {
+  const old_date = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  const year = old_date.getFullYear();
+  const month = old_date.getMonth() + 1;
+  const day = old_date.getDate();
+  const final_date = `${year}-${month}-${day}`;
+
+  return final_date;
+}
 
 // Updat date
 export async function dateUpdate() {
@@ -157,109 +175,29 @@ export async function generateHandedOver() {
   });
 }
 
-// For Lot MoA Chart
-export const statusMOA: String[] = [
-  'For Negotiation',
-  'Expropriation',
-  'Donation',
-  'CA 141',
-  'No Need to Acquire',
-];
+export async function generateHandedOverArea(contractcp: any) {
+  // Query
+  const queryContractp = `${cpField} = '` + contractcp + "'";
+  const lotIdNotNull = `${lotIdField} IS NOT NULL`;
 
-export const statusMoaLotChart = [
-  {
-    category: statusMOA[0],
-    value: 1,
-  },
-  {
-    category: statusMOA[1],
-    value: 2,
-  },
-  {
-    category: statusMOA[2],
-    value: 3,
-  },
-  {
-    category: statusMOA[3],
-    value: 4,
-  },
-  {
-    category: statusMOA[4],
-    value: 5,
-  },
-];
-
-export async function generateLotMoaData() {
-  var total_nego_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN MoA = 1 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_nego_lot',
-    statisticType: 'sum',
-  });
-
-  var total_expro_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN MoA = 2 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_expro_lot',
-    statisticType: 'sum',
-  });
-
-  var total_donate_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN MoA = 3 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_donate_lot',
-    statisticType: 'sum',
-  });
-
-  var total_ca141_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN MoA = 4 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_ca141_lot',
-    statisticType: 'sum',
-  });
-
-  var total_noneed_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN MoA = 5 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_noneed_lot',
+  var handed_over_area = new StatisticDefinition({
+    onStatisticField: lotHandedOverAreaField,
+    outStatisticFieldName: 'handed_over_area',
     statisticType: 'sum',
   });
 
   var query = lotLayer.createQuery();
-  query.outStatistics = [
-    total_nego_lot,
-    total_expro_lot,
-    total_donate_lot,
-    total_ca141_lot,
-    total_noneed_lot,
-  ];
-  query.returnGeometry = true;
+  query.outStatistics = [handed_over_area];
+  if (contractcp === 'All') {
+    query.where = lotIdNotNull;
+  } else {
+    query.where = lotIdNotNull + ' AND ' + queryContractp;
+  }
+
   return lotLayer.queryFeatures(query).then((response: any) => {
     var stats = response.features[0].attributes;
-    const nego = stats.total_nego_lot;
-    const expro = stats.total_expro_lot;
-    const donate = stats.total_donate_lot;
-    const ca141 = stats.total_ca141_lot;
-    const noneed = stats.total_noneed_lot;
-
-    const compile = [
-      {
-        category: statusMOA[0],
-        value: nego,
-      },
-      {
-        category: statusMOA[1],
-        value: expro,
-      },
-      {
-        category: statusMOA[2],
-        value: donate,
-      },
-      {
-        category: statusMOA[3],
-        value: ca141,
-      },
-      {
-        category: statusMOA[4],
-        value: noneed,
-      },
-    ];
-    return compile;
+    const value = stats.handed_over_area;
+    return value;
   });
 }
 
@@ -349,6 +287,72 @@ export async function generateHandedOverAreaData() {
     });
 
     return data;
+  });
+}
+
+export async function timeSeriesHandedOverChartData(contractp: any) {
+  var total_target = new StatisticDefinition({
+    onStatisticField: 'CASE WHEN TargetActual = 1 THEN 1 ELSE 0 END',
+    outStatisticFieldName: 'total_target',
+    statisticType: 'sum',
+  });
+
+  var total_actual = new StatisticDefinition({
+    // means handed over
+    onStatisticField: 'CASE WHEN TargetActual = 2 THEN 1 ELSE 0 END',
+    outStatisticFieldName: 'total_actual',
+    statisticType: 'sum',
+  });
+
+  const query = lotLayer.createQuery();
+  query.outStatistics = [total_target, total_actual];
+  // eslint-disable-next-line no-useless-concat
+  const queryDefault = '1=1';
+  const queryContractp = `${cpField} = '` + contractp + "'";
+  const queryHandedOverHandOverDate = lotTargetActualDateField + ' IS NOT NULL';
+
+  if (contractp === 'All') {
+    query.where = queryDefault + ' AND ' + queryHandedOverHandOverDate;
+    lotLayer.definitionExpression = queryDefault + ' AND ' + queryHandedOverHandOverDate;
+  } else {
+    query.where = queryContractp + ' AND ' + queryHandedOverHandOverDate;
+    lotLayer.definitionExpression = queryContractp + ' AND ' + queryHandedOverHandOverDate;
+  }
+
+  query.outFields = [lotTargetActualDateField];
+  query.orderByFields = [lotTargetActualDateField];
+  query.groupByFieldsForStatistics = [lotTargetActualDateField];
+
+  return lotLayer.queryFeatures(query).then((response: any) => {
+    var stats = response.features;
+
+    const data = stats.map((result: any, index: any) => {
+      const attributes = result.attributes;
+      const date = attributes[lotTargetActualDateField];
+      const targetCount = attributes.total_target;
+      const actualCount = attributes.total_actual;
+      return Object.assign({
+        date,
+        target: targetCount,
+        actual: actualCount,
+      });
+    });
+    var sum_target: any = 0;
+    var sum_actual: any = 0;
+
+    const data2 = data.map((result: any, index: any) => {
+      const date = result.date;
+      const v_target = result.target;
+      const v_actual = result.actual;
+      sum_target += v_target;
+      sum_actual += v_actual;
+      return Object.assign({
+        date,
+        target: sum_target,
+        actual: sum_actual,
+      });
+    });
+    return data2;
   });
 }
 

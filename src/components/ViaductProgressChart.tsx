@@ -4,6 +4,7 @@ import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
 import { viaductProgressChartData } from '../Query';
+import { useContractPackageContext } from './ContractPackageContext';
 
 // Dispose function
 function maybeDisposeRoot(divId: any) {
@@ -14,7 +15,9 @@ function maybeDisposeRoot(divId: any) {
   });
 }
 
-const ViaductProgressChart = (props: any) => {
+const ViaductProgressChart = () => {
+  const { cpValueSelected } = useContractPackageContext();
+
   const legendRef = useRef<unknown | any | undefined>({});
   const xAxisRef = useRef<unknown | any | undefined>({});
   const yAxisRef = useRef<unknown | any | undefined>({});
@@ -23,10 +26,10 @@ const ViaductProgressChart = (props: any) => {
 
   const chartID = 'progress-bar';
   useEffect(() => {
-    viaductProgressChartData(props.contractp).then((result: any) => {
+    viaductProgressChartData(cpValueSelected).then((result: any) => {
       setProgressData(result);
     });
-  }, [props.contractp]);
+  }, [cpValueSelected]);
 
   useEffect(() => {
     maybeDisposeRoot(chartID);
