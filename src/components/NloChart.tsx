@@ -98,7 +98,7 @@ const NloChart = memo(() => {
         legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
         radius: am5.percent(45), // outer radius
         innerRadius: am5.percent(28),
-        scale: 1.8,
+        scale: 2.2,
       }),
     );
     pieSeriesRef.current = pieSeries;
@@ -108,7 +108,7 @@ const NloChart = memo(() => {
     let inner_label = pieSeries.children.push(
       am5.Label.new(root, {
         text: '[#ffffff]{valueSum}[/]\n[fontSize: 0.5em; #d3d3d3; verticalAlign: super]NLOs[/]',
-        fontSize: '1rem',
+        fontSize: '0.9rem',
         centerX: am5.percent(50),
         centerY: am5.percent(40),
         populateText: true,

@@ -135,7 +135,7 @@ const TreeChart = () => {
         legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
         radius: am5.percent(45), // outer radius
         innerRadius: am5.percent(28),
-        scale: 2,
+        scale: 2.25,
       }),
     );
     pieSeriesRef.current = pieSeries;
@@ -145,7 +145,7 @@ const TreeChart = () => {
     let inner_label = pieSeries.children.push(
       am5.Label.new(root, {
         text: '[#ffffff]{valueSum}[/]\n[fontSize: 5px; #d3d3d3; verticalAlign: super]TREES[/]',
-        fontSize: '0.9rem',
+        fontSize: '0.8rem',
         centerX: am5.percent(50),
         centerY: am5.percent(40),
         populateText: true,
@@ -341,7 +341,7 @@ const TreeChart = () => {
         legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
         radius: am5.percent(45), // outer radius
         innerRadius: am5.percent(28),
-        scale: 2,
+        scale: 2.25,
       }),
     );
     pieSeriesRef_compen.current = pieSeries;
@@ -351,7 +351,7 @@ const TreeChart = () => {
     let inner_label = pieSeries.children.push(
       am5.Label.new(root, {
         text: '[#ffffff]{valueSum}[/]\n[fontSize: 5px; #d3d3d3; verticalAlign: super]TREES[/]',
-        fontSize: '0.9rem',
+        fontSize: '0.8rem',
         centerX: am5.percent(50),
         centerY: am5.percent(40),
         populateText: true,

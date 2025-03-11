@@ -135,7 +135,7 @@ const LotChart = () => {
         legendValueText: "{valuePercentTotal.formatNumber('#.')}% ({value})",
         radius: am5.percent(45), // outer radius
         innerRadius: am5.percent(28),
-        scale: 2.2,
+        scale: 2.5,
       }),
     );
     pieSeriesRef.current = pieSeries;
@@ -145,7 +145,7 @@ const LotChart = () => {
     let inner_label = pieSeries.children.push(
       am5.Label.new(root, {
         text: '[#ffffff]{valueSum}[/]\n[fontSize: 0.4rem; #d3d3d3; verticalAlign: super]PRIVATE LOTS[/]',
-        fontSize: '1rem',
+        fontSize: '0.9rem',
         centerX: am5.percent(50),
         centerY: am5.percent(40),
         populateText: true,
