@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/sc_compile/static/css/main.82e0663c.css",
-    "main.js": "/sc_compile/static/js/main.9e74ecc0.js",
+    "main.js": "/sc_compile/static/js/main.5927d4b4.js",
     "static/js/653.778b8f20.chunk.js": "/sc_compile/static/js/653.778b8f20.chunk.js",
     "static/js/765.cf5b499b.chunk.js": "/sc_compile/static/js/765.cf5b499b.chunk.js",
     "static/js/9078.35551f1a.chunk.js": "/sc_compile/static/js/9078.35551f1a.chunk.js",
@@ -457,7 +457,7 @@
     "static/media/SM-Slider_TrackBackground_hover.svg": "/sc_compile/static/media/SM-Slider_TrackBackground_hover.5dcf34ac7d59f98735ad.svg",
     "static/media/SM-Slider_TrackBackground_idle.svg": "/sc_compile/static/media/SM-Slider_TrackBackground_idle.cc7bd7014a003ba1844f.svg",
     "main.82e0663c.css.map": "/sc_compile/static/css/main.82e0663c.css.map",
-    "main.9e74ecc0.js.map": "/sc_compile/static/js/main.9e74ecc0.js.map",
+    "main.5927d4b4.js.map": "/sc_compile/static/js/main.5927d4b4.js.map",
     "653.778b8f20.chunk.js.map": "/sc_compile/static/js/653.778b8f20.chunk.js.map",
     "765.cf5b499b.chunk.js.map": "/sc_compile/static/js/765.cf5b499b.chunk.js.map",
     "9078.35551f1a.chunk.js.map": "/sc_compile/static/js/9078.35551f1a.chunk.js.map",
@@ -791,6 +791,6 @@
   },
   "entrypoints": [
     "static/css/main.82e0663c.css",
-    "static/js/main.9e74ecc0.js"
+    "static/js/main.5927d4b4.js"
   ]
 }
