@@ -346,7 +346,22 @@ const LotProgressChart = () => {
           marginLeft: 'auto',
           marginRight: 'auto',
         }}
-      ></div>
+      >
+        <b
+          style={{
+            fontSize: '60px',
+            opacity: '0.4',
+            zIndex: '12',
+            color: 'gray',
+            position: 'fixed',
+            bottom: '130px',
+            left: '100px',
+            transform: 'rotate(10deg)',
+          }}
+        >
+          UNDER DEVELOPMENT
+        </b>
+      </div>
     </>
   );
 };
