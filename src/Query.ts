@@ -23,6 +23,9 @@ import {
   lotStatusColor,
   lotStatusLabel,
   lotTargetActualDateField,
+  structureStatusField,
+  statusStructureLabel,
+  statusStructureQuery,
 } from './StatusUniqueValues';
 
 // get last date of month
@@ -357,145 +360,54 @@ export async function timeSeriesHandedOverChartData(contractp: any) {
 }
 
 // Structure
-const statusStructure = [
-  'Dismantling/Clearing',
-  'Paid',
-  'For Payment Processing',
-  'For Legal Pass',
-  'For Appraisal/Offer to Compensate',
-  'LBP Account Opening',
-];
-
-export const statusStructureChart = [
-  {
-    category: statusStructure[0],
-    value: 1,
-  },
-  {
-    category: statusStructure[1],
-    value: 2,
-  },
-  {
-    category: statusStructure[2],
-    value: 3,
-  },
-  {
-    category: statusStructure[3],
-    value: 4,
-  },
-  {
-    category: statusStructure[4],
-    value: 5,
-  },
-  {
-    category: statusStructure[5],
-    value: 6,
-  },
-];
-
-export async function generateStructureData() {
-  var total_clear_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN StatusStruc = 1 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_clear_lot',
-    statisticType: 'sum',
-  });
-
-  var total_paid_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN StatusStruc = 2 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_paid_lot',
-    statisticType: 'sum',
-  });
-
-  var total_payp_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN StatusStruc = 3 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_payp_lot',
-    statisticType: 'sum',
-  });
-
-  var total_legalpass_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN StatusStruc = 4 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_legalpass_lot',
-    statisticType: 'sum',
-  });
-
-  var total_otc_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN StatusStruc = 5 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_otc_lot',
-    statisticType: 'sum',
-  });
-
-  var total_lbp_lot = new StatisticDefinition({
-    onStatisticField: 'CASE WHEN StatusStruc = 6 THEN 1 ELSE 0 END',
-    outStatisticFieldName: 'total_lbp_lot',
-    statisticType: 'sum',
+export async function generateStructureData(contractcp: any) {
+  var total_count = new StatisticDefinition({
+    onStatisticField: structureStatusField,
+    outStatisticFieldName: 'total_count',
+    statisticType: 'count',
   });
 
   var query = structureLayer.createQuery();
-  query.outStatistics = [
-    total_clear_lot,
-    total_paid_lot,
-    total_payp_lot,
-    total_legalpass_lot,
-    total_otc_lot,
-    total_lbp_lot,
-  ];
-  query.returnGeometry = true;
-  query.outFields = ['*'];
+  const queryDefault = '1=1';
+  const queryContractp = "CP = '" + contractcp + "'";
+
+  if (contractcp === 'All') {
+    structureLayer.definitionExpression = queryDefault;
+  } else {
+    structureLayer.definitionExpression = queryContractp;
+  }
+
+  query.outFields = [structureStatusField];
+  query.outStatistics = [total_count];
+  query.orderByFields = [structureStatusField];
+  query.groupByFieldsForStatistics = [structureStatusField];
+
   return structureLayer.queryFeatures(query).then((response: any) => {
-    var stats = response.features[0].attributes;
+    var stats = response.features;
+    const data = stats.map((result: any, index: any) => {
+      const attributes = result.attributes;
+      const status_id = attributes.StatusStruc;
+      const count = attributes.total_count;
+      return Object.assign({
+        category: statusStructureLabel[status_id - 1],
+        value: count,
+      });
+    });
 
-    const clear = stats.total_clear_lot;
-    const paid = stats.total_paid_lot;
-    const payp = stats.total_payp_lot;
-    const legalpass = stats.total_legalpass_lot;
-    const otc = stats.total_otc_lot;
-    const lbp = stats.total_lbp_lot;
-
-    const compile = [
-      {
-        category: statusStructure[0],
-        value: clear,
+    const data1: any = [];
+    statusStructureLabel.map((status: any, index: any) => {
+      const find = data.find((emp: any) => emp.category === status);
+      const value = find === undefined ? 0 : find?.value;
+      const object = {
+        category: status,
+        value: value,
         sliceSettings: {
-          fill: am5.color('#00C5FF'),
+          fill: am5.color(statusStructureQuery[index].color),
         },
-      },
-      {
-        category: statusStructure[1],
-        value: paid,
-        sliceSettings: {
-          fill: am5.color('#70AD47'),
-        },
-      },
-      {
-        category: statusStructure[2],
-        value: payp,
-        sliceSettings: {
-          fill: am5.color('#0070FF'),
-        },
-      },
-      {
-        category: statusStructure[3],
-        value: legalpass,
-        sliceSettings: {
-          fill: am5.color('#FFFF00'),
-        },
-      },
-      {
-        category: statusStructure[4],
-        value: otc,
-        sliceSettings: {
-          fill: am5.color('#FFAA00'),
-        },
-      },
-      {
-        category: statusStructure[5],
-        value: lbp,
-        sliceSettings: {
-          fill: am5.color('#FF0000'),
-        },
-      },
-    ];
-    return compile;
+      };
+      data1.push(object);
+    });
+    return data1;
   });
 }
 

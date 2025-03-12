@@ -7,13 +7,8 @@ import * as am5 from '@amcharts/amcharts5';
 import * as am5percent from '@amcharts/amcharts5/percent';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
-import {
-  generateStrucNumber,
-  generateStructureData,
-  thousands_separators,
-  statusStructureChart,
-} from '../Query';
-import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import { generateStrucNumber, generateStructureData, thousands_separators } from '../Query';
+import { primaryLabelColor, statusStructureQuery, valueLabelColor } from '../StatusUniqueValues';
 import '@esri/calcite-components/dist/components/calcite-label';
 import { CalciteLabel } from '@esri/calcite-components-react';
 import { useContractPackageContext } from './ContractPackageContext';
@@ -61,7 +56,7 @@ const StructureChart = memo(() => {
   }
 
   useEffect(() => {
-    generateStructureData().then((result: any) => {
+    generateStructureData(cpValueSelected).then((result: any) => {
       setStructureData(result);
     });
 
@@ -138,15 +133,32 @@ const StructureChart = memo(() => {
     });
 
     // Disabling labels and ticksll
-    pieSeries.labels.template.set('visible', false);
-    pieSeries.ticks.template.set('visible', false);
+    pieSeries.labels.template.setAll({
+      // fill: am5.color('#ffffff'),
+      // fontSize: '0.5rem',
+      visible: false,
+      scale: 0,
+      // oversizedBehavior: 'wrap',
+      // maxWidth: 65,
+      // text: "{category}: [#C9CC3F; fontSize: 10px;]{valuePercentTotal.formatNumber('#.')}%[/]",
+    });
+
+    // pieSeries.labels.template.set('visible', true);
+    pieSeries.ticks.template.setAll({
+      // fillOpacity: 0.9,
+      // stroke: am5.color('#ffffff'),
+      // strokeWidth: 0.3,
+      // strokeOpacity: 1,
+      visible: false,
+      scale: 0,
+    });
 
     // EventDispatcher is disposed at SpriteEventDispatcher...
     // It looks like this error results from clicking events
     pieSeries.slices.template.events.on('click', (ev) => {
       const selected: any = ev.target.dataItem?.dataContext;
       const categorySelect: string = selected.category;
-      const find = statusStructureChart.find((emp: any) => emp.category === categorySelect);
+      const find = statusStructureQuery.find((emp: any) => emp.category === categorySelect);
       const statusSelect = find?.value;
 
       var highlightSelect: any;

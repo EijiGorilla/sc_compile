@@ -36,6 +36,8 @@ import {
   nloStatusField,
   nloStatusLabel,
   nloStatusSymbolRef,
+  statusStructureLabel,
+  statusStructureQuery,
   structureOccupancyRef,
   structureOccupancyStatusField,
   structureOccupancyStatusLabel,
@@ -44,7 +46,6 @@ import {
   structureOwnershipStatusLabel,
   structureStatusColorRgb,
   structureStatusField,
-  structureStatusLabel,
   valueLabelColor,
 } from './StatusUniqueValues';
 
@@ -671,96 +672,6 @@ handedOverLotLayer.listMode = 'hide';
 const height = 5;
 const edgeSize = 0.3;
 
-const dismantled = new PolygonSymbol3D({
-  symbolLayers: [
-    new ExtrudeSymbol3DLayer({
-      size: height,
-      material: {
-        color: [0, 197, 255, 0.6],
-      },
-      edges: new SolidEdges3D({
-        color: '#4E4E4E',
-        size: edgeSize,
-      }),
-    }),
-  ],
-});
-
-const paid = new PolygonSymbol3D({
-  symbolLayers: [
-    new ExtrudeSymbol3DLayer({
-      size: height,
-      material: {
-        color: [112, 173, 71, 0.6],
-      },
-      edges: new SolidEdges3D({
-        color: '#4E4E4E',
-        size: edgeSize,
-      }),
-    }),
-  ],
-});
-
-const payp = new PolygonSymbol3D({
-  symbolLayers: [
-    new ExtrudeSymbol3DLayer({
-      size: height,
-      material: {
-        color: [0, 112, 255, 0.6],
-      },
-      edges: new SolidEdges3D({
-        color: '#4E4E4E',
-        size: edgeSize,
-      }),
-    }),
-  ],
-});
-
-const legalpass = new PolygonSymbol3D({
-  symbolLayers: [
-    new ExtrudeSymbol3DLayer({
-      size: height,
-      material: {
-        color: [255, 255, 0, 0.6],
-      },
-      edges: new SolidEdges3D({
-        color: '#4E4E4E',
-        size: edgeSize,
-      }),
-    }),
-  ],
-});
-
-const otc = new PolygonSymbol3D({
-  symbolLayers: [
-    new ExtrudeSymbol3DLayer({
-      size: height,
-      material: {
-        color: [255, 170, 0, 0.6],
-      },
-      edges: new SolidEdges3D({
-        color: '#4E4E4E',
-        size: edgeSize,
-      }),
-    }),
-  ],
-});
-
-const lbp = new PolygonSymbol3D({
-  symbolLayers: [
-    new ExtrudeSymbol3DLayer({
-      size: height,
-      material: {
-        color: [255, 0, 0, 0.6],
-      },
-      edges: new SolidEdges3D({
-        color: '#4E4E4E',
-        size: edgeSize,
-      }),
-    }),
-  ],
-});
-
 const defaultStructureRenderer = new PolygonSymbol3D({
   symbolLayers: [
     new ExtrudeSymbol3DLayer({
@@ -776,7 +687,7 @@ const defaultStructureRenderer = new PolygonSymbol3D({
   ],
 });
 
-const uniqueValueInfosStrucStatus = structureStatusLabel.map((status: any, index: any) => {
+const structureRendererUniqueValueInfos = statusStructureLabel.map((status: any, index: any) => {
   return Object.assign({
     value: index + 1,
     symbol: new PolygonSymbol3D({
@@ -784,7 +695,7 @@ const uniqueValueInfosStrucStatus = structureStatusLabel.map((status: any, index
         new ExtrudeSymbol3DLayer({
           size: height,
           material: {
-            color: structureStatusColorRgb[index],
+            color: statusStructureQuery[index].colorLayer,
           },
           edges: new SolidEdges3D({
             color: '#4E4E4E',
@@ -796,11 +707,12 @@ const uniqueValueInfosStrucStatus = structureStatusLabel.map((status: any, index
     label: status,
   });
 });
+
 const structureRenderer = new UniqueValueRenderer({
   defaultSymbol: defaultStructureRenderer,
   defaultLabel: 'Other',
-  field: structureStatusField,
-  uniqueValueInfos: uniqueValueInfosStrucStatus,
+  field: 'StatusStruc',
+  uniqueValueInfos: structureRendererUniqueValueInfos,
 });
 
 export const structureLayer = new FeatureLayer({

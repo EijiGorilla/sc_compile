@@ -75,7 +75,7 @@ export const lotMoaStatusQuery = lotMoaStatus.map((status, index) => {
 
 // Structure
 export const structureStatusField = 'StatusStruc';
-export const structureStatusLabel = [
+export const statusStructureLabel = [
   'Demolished',
   'Paid',
   'For Payment Processing',
@@ -104,7 +104,7 @@ export const structureStatusColorRgb = [
   [178, 190, 181, 0.6],
 ];
 
-export const structureStatusQuery = structureStatusLabel.map((status, index) => {
+export const statusStructureQuery = statusStructureLabel.map((status, index) => {
   return Object.assign({
     category: status,
     value: index + 1,

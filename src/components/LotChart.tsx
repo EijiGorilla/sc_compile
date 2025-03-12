@@ -169,8 +169,25 @@ const LotChart = () => {
     });
 
     // Disabling labels and ticksll
-    pieSeries.labels.template.set('visible', false);
-    pieSeries.ticks.template.set('visible', false);
+    pieSeries.labels.template.setAll({
+      // fill: am5.color('#ffffff'),
+      // fontSize: '0.5rem',
+      visible: false,
+      scale: 0,
+      // oversizedBehavior: 'wrap',
+      // maxWidth: 65,
+      // text: "{category}: [#C9CC3F; fontSize: 10px;]{valuePercentTotal.formatNumber('#.')}%[/]",
+    });
+
+    // pieSeries.labels.template.set('visible', true);
+    pieSeries.ticks.template.setAll({
+      // fillOpacity: 0.9,
+      // stroke: am5.color('#ffffff'),
+      // strokeWidth: 0.3,
+      // strokeOpacity: 1,
+      visible: false,
+      scale: 0,
+    });
 
     // EventDispatcher is disposed at SpriteEventDispatcher...
     // It looks like this error results from clicking events
