@@ -9,6 +9,7 @@ import * as am5percent from '@amcharts/amcharts5/percent';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
 import {
+  dateUpdate,
   generateHandedOver,
   generateHandedOverArea,
   generateLotData,
@@ -21,7 +22,13 @@ import '../App.css';
 import '@esri/calcite-components/dist/components/calcite-label';
 import '@esri/calcite-components/dist/components/calcite-checkbox';
 import { CalciteLabel, CalciteCheckbox } from '@esri/calcite-components-react';
-import { cpField, primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import {
+  cpField,
+  cutoff_days,
+  primaryLabelColor,
+  updatedDateCategoryNames,
+  valueLabelColor,
+} from '../StatusUniqueValues';
 import { useContractPackageContext } from './ContractPackageContext';
 
 // Dispose function
@@ -37,6 +44,16 @@ function maybeDisposeRoot(divId: any) {
 /// Draw chart
 const LotChart = () => {
   const { cpValueSelected } = useContractPackageContext();
+
+  // 0. Updated date
+  const [asOfDate, setAsOfDate] = useState<undefined | any | unknown>(null);
+  const [daysPass, setDaysPass] = useState<boolean>(false);
+  useEffect(() => {
+    dateUpdate(updatedDateCategoryNames[0]).then((response: any) => {
+      setAsOfDate(response[0][0]);
+      setDaysPass(response[0][1] >= cutoff_days ? true : false);
+    });
+  }, []);
 
   // 1. Land Acquisition
   const pieSeriesRef = useRef<unknown | any | undefined>({});
@@ -361,6 +378,19 @@ const LotChart = () => {
           />
         </b>
       </CalciteLabel>
+
+      {/* As of date  */}
+      <div
+        style={{
+          color: daysPass === true ? 'red' : 'gray',
+          fontSize: '0.8rem',
+          float: 'right',
+          marginRight: '5px',
+          marginTop: '5px',
+        }}
+      >
+        {!asOfDate ? '' : 'As of ' + asOfDate}
+      </div>
 
       <div
         id={chartID}

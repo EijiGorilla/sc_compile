@@ -7,8 +7,19 @@ import * as am5 from '@amcharts/amcharts5';
 import * as am5percent from '@amcharts/amcharts5/percent';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
-import { generateStrucNumber, generateStructureData, thousands_separators } from '../Query';
-import { primaryLabelColor, statusStructureQuery, valueLabelColor } from '../StatusUniqueValues';
+import {
+  dateUpdate,
+  generateStrucNumber,
+  generateStructureData,
+  thousands_separators,
+} from '../Query';
+import {
+  cutoff_days,
+  primaryLabelColor,
+  statusStructureQuery,
+  updatedDateCategoryNames,
+  valueLabelColor,
+} from '../StatusUniqueValues';
 import '@esri/calcite-components/dist/components/calcite-label';
 import { CalciteLabel } from '@esri/calcite-components-react';
 import { useContractPackageContext } from './ContractPackageContext';
@@ -27,6 +38,16 @@ function maybeDisposeRoot(divId: any) {
 /// Draw chart
 const StructureChart = memo(() => {
   const { cpValueSelected } = useContractPackageContext();
+
+  // 0. Updated date
+  const [asOfDate, setAsOfDate] = useState<undefined | any | unknown>(null);
+  const [daysPass, setDaysPass] = useState<boolean>(false);
+  useEffect(() => {
+    dateUpdate(updatedDateCategoryNames[1]).then((response: any) => {
+      setAsOfDate(response[0][0]);
+      setDaysPass(response[0][1] >= cutoff_days ? true : false);
+    });
+  }, []);
 
   // 1. Structure
   const pieSeriesRef = useRef<unknown | any | undefined>({});
@@ -324,6 +345,17 @@ const StructureChart = memo(() => {
           />
         </b>
       </CalciteLabel>
+
+      <div
+        style={{
+          color: daysPass === true ? 'red' : 'gray',
+          fontSize: '0.8rem',
+          float: 'right',
+          marginRight: '5px',
+        }}
+      >
+        {!asOfDate ? '' : 'As of ' + asOfDate}
+      </div>
 
       {/* Structure Chart */}
       <div

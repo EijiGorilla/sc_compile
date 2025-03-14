@@ -1,3 +1,14 @@
+// Updated Dates
+export const updatedDateCategoryNames = [
+  'Land Acquisition',
+  'Structure',
+  'Non Land Owner',
+  'Utility Relocation',
+  'Trees',
+  'Viaduct',
+];
+export const cutoff_days = 30;
+
 // Lot Status
 export const lotStatusField = 'StatusLA';
 export const lotIdField = 'LotID';

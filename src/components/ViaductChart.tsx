@@ -6,7 +6,12 @@ import * as am5 from '@amcharts/amcharts5';
 import * as am5xy from '@amcharts/amcharts5/xy';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 import am5themes_Responsive from '@amcharts/amcharts5/themes/Responsive';
-import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import {
+  cutoff_days,
+  primaryLabelColor,
+  updatedDateCategoryNames,
+  valueLabelColor,
+} from '../StatusUniqueValues';
 import '@esri/calcite-components/dist/components/calcite-label';
 import { CalciteLabel } from '@esri/calcite-components-react';
 
@@ -16,6 +21,7 @@ import {
   generateTotalProgress,
   thousands_separators,
   viatypes,
+  dateUpdate,
 } from '../Query';
 import { useContractPackageContext } from './ContractPackageContext';
 
@@ -31,6 +37,16 @@ function maybeDisposeRoot(divId: any) {
 // Draw chart
 const ViaductChart = () => {
   const { cpValueSelected } = useContractPackageContext();
+
+  // 0. Updated date
+  const [asOfDate, setAsOfDate] = useState<undefined | any | unknown>(null);
+  const [daysPass, setDaysPass] = useState<boolean>(false);
+  useEffect(() => {
+    dateUpdate(updatedDateCategoryNames[5]).then((response: any) => {
+      setAsOfDate(response[0][0]);
+      setDaysPass(response[0][1] >= cutoff_days ? true : false);
+    });
+  }, []);
 
   const legendRef = useRef<unknown | any | undefined>({});
   const chartRef = useRef<unknown | any | undefined>({});
@@ -359,6 +375,19 @@ const ViaductChart = () => {
           />
         </b>
       </CalciteLabel>
+
+      {/* As of date  */}
+      <div
+        style={{
+          color: daysPass === true ? 'red' : 'gray',
+          fontSize: '0.8rem',
+          float: 'right',
+          marginRight: '5px',
+          marginTop: '5px',
+        }}
+      >
+        {!asOfDate ? '' : 'As of ' + asOfDate}
+      </div>
 
       <div
         id={chartID}

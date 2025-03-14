@@ -16,13 +16,19 @@ import '@esri/calcite-components/dist/components/calcite-label';
 import { CalciteLabel } from '@esri/calcite-components-react';
 import '../App.css';
 import {
+  dateUpdate,
   generateUtilityLineData,
   generateUtilityNumbers,
   generateUtilityPointData,
   thousands_separators,
   utilityTypeChart,
 } from '../Query';
-import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import {
+  cutoff_days,
+  primaryLabelColor,
+  updatedDateCategoryNames,
+  valueLabelColor,
+} from '../StatusUniqueValues';
 import { useContractPackageContext } from './ContractPackageContext';
 
 // Dispose function
@@ -37,6 +43,16 @@ function maybeDisposeRoot(divId: any) {
 // Draw chart
 const UtilityChart = () => {
   const { cpValueSelected } = useContractPackageContext();
+
+  // 0. Updated date
+  const [asOfDate, setAsOfDate] = useState<undefined | any | unknown>(null);
+  const [daysPass, setDaysPass] = useState<boolean>(false);
+  useEffect(() => {
+    dateUpdate(updatedDateCategoryNames[3]).then((response: any) => {
+      setAsOfDate(response[0][0]);
+      setDaysPass(response[0][1] >= cutoff_days ? true : false);
+    });
+  }, []);
 
   // utility point
   const chartRef = useRef<unknown | any | undefined>({});
@@ -706,6 +722,17 @@ const UtilityChart = () => {
           />
         </b>
       </CalciteLabel>
+
+      <div
+        style={{
+          color: daysPass === true ? 'red' : 'gray',
+          fontSize: '0.8rem',
+          float: 'right',
+          marginRight: '5px',
+        }}
+      >
+        {!asOfDate ? '' : 'As of ' + asOfDate}
+      </div>
 
       <div id="utilityPointChartTitle" style={{ marginTop: '10px' }}>
         POINT FEATURE

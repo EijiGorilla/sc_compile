@@ -14,9 +14,15 @@ import {
   statusTreeCompensationChart,
   thousands_separators,
   generateTreeCompensationData,
+  dateUpdate,
 } from '../Query';
 import '../App.css';
-import { primaryLabelColor, valueLabelColor } from '../StatusUniqueValues';
+import {
+  cutoff_days,
+  primaryLabelColor,
+  updatedDateCategoryNames,
+  valueLabelColor,
+} from '../StatusUniqueValues';
 import '@esri/calcite-components/dist/components/calcite-label';
 import { CalciteLabel } from '@esri/calcite-components-react';
 import { useContractPackageContext } from './ContractPackageContext';
@@ -32,6 +38,16 @@ function maybeDisposeRoot(divId: any) {
 
 const TreeChart = () => {
   const { cpValueSelected } = useContractPackageContext();
+
+  // 0. Updated date
+  const [asOfDate, setAsOfDate] = useState<undefined | any | unknown>(null);
+  const [daysPass, setDaysPass] = useState<boolean>(false);
+  useEffect(() => {
+    dateUpdate(updatedDateCategoryNames[4]).then((response: any) => {
+      setAsOfDate(response[0][0]);
+      setDaysPass(response[0][1] >= cutoff_days ? true : false);
+    });
+  }, []);
 
   // Tree cutting
   const pieSeriesRef = useRef<unknown | any | undefined>({});
@@ -592,6 +608,17 @@ const TreeChart = () => {
           />
         </b>
       </CalciteLabel>
+
+      <div
+        style={{
+          color: daysPass === true ? 'red' : 'gray',
+          fontSize: '0.8rem',
+          float: 'right',
+          marginRight: '5px',
+        }}
+      >
+        {!asOfDate ? '' : 'As of ' + asOfDate}
+      </div>
 
       <div
         id={chartID_cuting}

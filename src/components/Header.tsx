@@ -1,16 +1,6 @@
-import { useEffect, useState } from 'react';
-import { dateUpdate } from '../Query';
 import ContractPackageDisplay from './ContractPackageContext';
 
 function Header() {
-  const [asOfDate, setAsOfDate] = useState<undefined | any | unknown>(null);
-
-  useEffect(() => {
-    dateUpdate().then((response: any) => {
-      setAsOfDate(response);
-    });
-  }, []);
-
   return (
     <>
       <header
@@ -28,7 +18,6 @@ function Header() {
         <b className="headerTitle" style={{ width: '30%' }}>
           SC OVERALL PROGRESS
         </b>
-        <div className="date">{!asOfDate ? '' : 'As of ' + asOfDate}</div>
 
         {/* Contract Package Segmented List */}
         <ContractPackageDisplay />

@@ -40,7 +40,7 @@ export function lastDateOfMonth(date: Date) {
 }
 
 // Updat date
-export async function dateUpdate() {
+export async function dateUpdate(category: any) {
   const monthList = [
     'January',
     'February',
@@ -57,17 +57,24 @@ export async function dateUpdate() {
   ];
 
   const query = dateTable.createQuery();
-  query.where = "project = 'SC'" + ' AND ' + "category = 'Compiled'";
+  query.where = "project = 'SC'" + ' AND ' + "category = '" + category + "'";
 
   return dateTable.queryFeatures(query).then((response: any) => {
     const stats = response.features;
     const dates = stats.map((result: any) => {
+      // get today and date recorded in the table
+      const today = new Date();
       const date = new Date(result.attributes.date);
+
+      // Calculate the number of days passed since the last update
+      const time_passed = today.getTime() - date.getTime();
+      const days_passed = Math.round(time_passed / (1000 * 3600 * 24));
+
       const year = date.getFullYear();
       const month = monthList[date.getMonth()];
       const day = date.getDate();
       const final = year < 1990 ? '' : `${month} ${day}, ${year}`;
-      return final;
+      return [final, days_passed];
     });
     return dates;
   });
