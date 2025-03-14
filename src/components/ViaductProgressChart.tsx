@@ -58,7 +58,7 @@ const ViaductProgressChart = () => {
     // Chart title
     chart.children.unshift(
       am5.Label.new(root, {
-        text: 'Monthly Progress',
+        text: 'Monthly Progress on Viaduct Construction',
         fontSize: 14,
         fontWeight: 'bold',
         textAlign: 'center',
