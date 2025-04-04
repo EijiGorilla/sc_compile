@@ -803,7 +803,7 @@ export const nloLayer = new FeatureLayer({
 
   title: 'NLO (Non-Land Owner)',
   elevationInfo: {
-    mode: 'relative-to-ground',
+    mode: 'relative-to-scene',
   },
   minScale: 10000,
   maxScale: 0,
