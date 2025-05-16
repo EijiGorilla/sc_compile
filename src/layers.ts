@@ -1113,7 +1113,7 @@ const defaultPierAccessLabel = new LabelClass({
     },
   }),
   labelExpressionInfo: {
-    expression: '$feature.PIER',
+    expression: '$feature.PierNumber',
     //'DefaultValue($feature.GeoTechName, "no data")'
     //"IIF($feature.Score >= 13, '', '')"
     //value: "{Type}"
@@ -1158,7 +1158,7 @@ const pierAccessReadyDateLabel = new LabelClass({
   labelExpressionInfo: {
     expression: `var accessdate = $feature.AccessDate;
                   var cutoffDate = 1718062335146;
-                  var labelPier = when($feature.AccessDate <= cutoffDate, $feature.PIER, '');
+                  var labelPier = when($feature.AccessDate <= cutoffDate, $feature.PierNumber, '');
                   return \`\${labelPier}\`
                   `,
   },
@@ -1196,7 +1196,7 @@ const pierAccessNotYetLabel = new LabelClass({
   labelExpressionInfo: {
     expression: `var accessdate = $feature.AccessDate;
                   var cutoffDate = 1718062335146;
-                  var labelPier = when($feature.AccessDate > cutoffDate || isEmpty($feature.AccessDate), $feature.PIER, '');
+                  var labelPier = when($feature.AccessDate > cutoffDate || isEmpty($feature.AccessDate), $feature.PierNumber, '');
                   return \`\${labelPier}\`
                   `,
   },
@@ -1232,7 +1232,7 @@ const pierAccessDateMissingLabel = new LabelClass({
     },
   }),
   labelExpressionInfo: {
-    expression: '$feature.PIER',
+    expression: '$feature.PierNumber',
     //'DefaultValue($feature.GeoTechName, "no data")'
     //"IIF($feature.Score >= 13, '', '')"
     //value: "{Type}"
